@@ -38,6 +38,9 @@
         <label>Custom Uzantı (Slug)</label>
         <input type="text" id="slug" placeholder="hava-durumu">
 
+        <label>Şifre</label>
+        <input type="password" id="password" placeholder="Girmeniz gereken şifre: asuria">
+
         <button class="btn-primary" onclick="createAPI()">Sistemi Kur</button>
         
         <!-- İŞTE BURASI: YÖNETİM PANELİNE GİDİŞ BUTONU -->
@@ -52,10 +55,11 @@
             const payload = {
                 targetUrl: document.getElementById('targetUrl').value,
                 apiName: document.getElementById('apiName').value,
-                slug: document.getElementById('slug').value
+                slug: document.getElementById('slug').value,
+                password: document.getElementById('password').value
             };
 
-            if(!payload.targetUrl || !payload.slug) return alert("Eksik alan bırakmayın!");
+            if(!payload.targetUrl || !payload.slug || !payload.password) return alert("Eksik alan bırakmayın!");
 
             status.className = '';
             status.innerText = "GitHub'a bağlanılıyor ve dosya oluşturuluyor...";
@@ -77,6 +81,7 @@
                     document.getElementById('targetUrl').value = '';
                     document.getElementById('apiName').value = '';
                     document.getElementById('slug').value = '';
+                    document.getElementById('password').value = '';
                 } else {
                     throw new Error(data.hata || "Bilinmeyen hata");
                 }

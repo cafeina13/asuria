@@ -1,4 +1,12 @@
 export default async function handler(req, res) {
+
+    
+  const sifre = process.env.PASSWORD_ASURINE;
+
+    if (sifre !== req.body.password) {
+      return res.status(401).json({ hata: "Yetkisiz erişim! Şifre yanlış." });
+    }
+
   const token = process.env.GITHUB_TOKEN;
   const REPO_OWNER = "cafeina13";
   const REPO_NAME = "asuria";

@@ -3,6 +3,11 @@ export default async function handler(req, res) {
 
   const { targetUrl, apiName, slug } = req.body;
   const token = process.env.GITHUB_TOKEN;
+  const sifre = process.env.PASSWORD_ASURINE;
+
+    if (sifre !== req.body.password) {
+      return res.status(401).json({ hata: "Yetkisiz erişim! Şifre yanlış." });
+    }
 
   const yasakliUzantilar = ["create", "manage", "index"];
   if (yasakliUzantilar.includes(slug.toLowerCase())) {

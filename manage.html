@@ -83,6 +83,9 @@
 
       <div id="apiList">Yükleniyor...</div>
 
+      <label>Şifre</label>
+      <input type="password" id="password" placeholder="Girmeniz gereken şifre: asuria">
+
       <button onclick="kaydet()" id="saveBtn">Değişiklikleri Kaydet</button>
     </div>
 
@@ -136,7 +139,7 @@
         const res = await fetch("/api/manage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(mevcutApiler),
+          body: JSON.stringify({ apis: mevcutApiler, password: document.getElementById("password").value }),
         });
 
         if (res.ok) {
