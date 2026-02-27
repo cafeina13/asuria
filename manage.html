@@ -52,6 +52,20 @@
         height: 20px;
         cursor: pointer;
       }
+      input[type="textbox"] {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #0f172a;
+        color: white;
+        box-sizing: border-box;
+        outline: none;
+      }
+      input:focus {
+        border-color: #38bdf8;
+      }
       button {
         background: #10b981;
         color: white;
@@ -84,7 +98,11 @@
       <div id="apiList">Yükleniyor...</div>
 
       <label>Şifre</label>
-      <input type="password" id="password" placeholder="Girmeniz gereken şifre: asuria">
+      <input
+        type="password"
+        id="password"
+        placeholder="Girmeniz gereken şifre: asuria"
+      />
 
       <button onclick="kaydet()" id="saveBtn">Değişiklikleri Kaydet</button>
     </div>
@@ -139,7 +157,10 @@
         const res = await fetch("/api/manage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ apis: mevcutApiler, password: document.getElementById("password").value }),
+          body: JSON.stringify({
+            apis: mevcutApiler,
+            password: document.getElementById("password").value,
+          }),
         });
 
         if (res.ok) {

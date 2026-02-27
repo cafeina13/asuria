@@ -1,11 +1,7 @@
 export default async function handler(req, res) {
 
-    
-  const sifre = process.env.PASSWORD_ASURINE;
 
-    if (sifre !== req.body.password) {
-      return res.status(401).json({ hata: "Yetkisiz erişim! Şifre yanlış." });
-    }
+  const sifre = process.env.PASSWORD_ASURINE;
 
   const token = process.env.GITHUB_TOKEN;
   const REPO_OWNER = "cafeina13";
@@ -29,6 +25,9 @@ export default async function handler(req, res) {
 
   // "Kaydet" butonuna basıldığında yeni ayarları kaydet (POST)
   if (req.method === "POST") {
+    if (sifre !== req.body.password) {
+      return res.status(401).json({ hata: "Yetkisiz erişim! Şifre yanlış." });
+    }
     const yeniListe = req.body;
 
     const getJson = await fetch(jsonUrl, {
