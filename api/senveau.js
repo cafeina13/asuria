@@ -38,7 +38,7 @@ export default async function handler(request, response) {
 
         // Eğer yanıt 429 (Too Many Requests) veya başka bir hata koduysa
         if (geminiYaniti.status === 429) {
-          aciklama = "[Kota dolduğu için açıklama eklenemedi]";
+          aciklama = "[Kota doldu]";
         } else if (!geminiYaniti.ok) {
           aciklama = "[Yapay zeka şu an meşgul]";
         } else {
@@ -62,7 +62,7 @@ export default async function handler(request, response) {
 
     // 3. Son Çıktı Formatı
     // İster kota dolsun ister dolmasın, yazar ve söz her zaman gönderilir.
-    const sonCikti = `${yazar},${orijinalSoz}::. ${aciklama}`;
+    const sonCikti = `${yazar},${orijinalSoz} :: . ${aciklama}`;
 
     return response.status(200).send(sonCikti);
   } catch (error) {
