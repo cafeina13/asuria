@@ -51,8 +51,8 @@ export default async function handler(request, response) {
       geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Çeviri şu an yapılamıyor.";
 
-    /////////////////////////// ${orijinalSoz}
-    const sonCikti = `${yazar}, ${aciklamaliCeviri.trim()}`;
+    /////////////////////////// ${aciklamaliCeviri.trim()}
+    const sonCikti = `${yazar},${orijinalSoz} `;
 
     // 4. JSON formatında temiz çıktı gönder
     return response.status(200).send(sonCikti);
