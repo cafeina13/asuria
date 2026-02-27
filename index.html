@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>API Fabrikası</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #sonuc { margin-top: 15px; font-size: 14px; word-break: break-all; color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🚀 API Fabrikası</h2>
+        <p>Yeni bir Stoic-Gemini API'si oluştur.</p>
+        <input type="text" id="apiName" placeholder="API İsmi (Ör: Marcus Günlüğü)">
+        <input type="text" id="slug" placeholder="Custom Adres (Ör: marcus-api)">
+        <button onclick="olustur()">API Oluştur</button>
+        <div id="sonuc"></div>
+    </div>
+
+    <script>
+        async function olustur() {
+            const apiName = document.getElementById('apiName').value;
+            const slug = document.getElementById('slug').value;
+            const sonucDiv = document.getElementById('sonuc');
+            
+            sonucDiv.innerText = "İşleniyor, lütfen bekleyin...";
+
+            const response = await fetch('/api/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ apiName, slug })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                sonucDiv.innerHTML = `✅ ${data.mesaj}<br><br><i>Not: Vercel'in yeni dosyayı tanıması 1-2 dakika sürebilir.</i>`;
+            } else {
+                sonucDiv.innerText = "❌ Hata: " + data.hata;
+            }
+        }
+    </script>
+</body>
+</html>
