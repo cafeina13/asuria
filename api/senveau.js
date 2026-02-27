@@ -1,3 +1,5 @@
+const KAPALI_YAZISI = "Bu API şu anda Dans Etmeye gitti ne zaman gelir belli değil.";
+
 export default async function handler(request, response) {
   // CORS Ayarları
   response.setHeader("Access-Control-Allow-Origin", "*");
@@ -6,6 +8,34 @@ export default async function handler(request, response) {
   response.setHeader("Content-Type", "text/plain; charset=utf-8"); // Çıktıyı düz metin yapıyoruz
 
   if (request.method === "OPTIONS") return response.status(200).end();
+
+  try {
+      const token = process.env.GITHUB_TOKEN;
+    
+    if (token) {
+      // GitHub'daki listeyi doğrudan düz metin formatında okuyoruz
+      const jsonCheckRes = await fetch("https://api.github.com/repos/cafeina13/asuria/contents/apis.json", {
+        headers: { 
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3.raw' 
+        }
+      });
+
+      if (jsonCheckRes.ok) {
+        const apisList = await jsonCheckRes.json();
+        
+        // Kendi ismini (senveau) listede arıyor
+        const buApi = apisList.find(api => api.slug === "senveau");
+        
+        // Eğer listede varsa ve panelden kapatılmışsa (isActive: false)
+        if (buApi && buApi.isActive === false) {
+          // GEMİNİ'YE GİTMEDEN DOĞRUDAN BELİRLEDİĞİN YAZIYI GÖNDER VE DUR
+          return response.status(200).send(KAPALI_YAZISI);
+        }
+      }
+    }
+  }
+    catch (error) {}
 
   try {
     // 1. Çalışan Stoic API'den sözü al (Bu kısım her zaman çalışmalı)
