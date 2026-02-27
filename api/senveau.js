@@ -62,7 +62,7 @@ export default async function handler(request, response) {
 
     // 3. Son Çıktı Formatı
     // İster kota dolsun ister dolmasın, yazar ve söz her zaman gönderilir.
-    const sonCikti = `${yazar},${orijinalSoz} :: . ${aciklama}`;
+    const sonCikti = `${yazar},${orijinalSoz} :: .${aciklama}`;
 
     return response.status(200).send(sonCikti);
   } catch (error) {
