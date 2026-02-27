@@ -1,4 +1,5 @@
 export default async function handler(request, response) {
+  // CORS Ayarları
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -6,18 +7,13 @@ export default async function handler(request, response) {
   if (request.method === "OPTIONS") return response.status(200).end();
 
   try {
-    // 1. Yeni ve Çalışan Stoic API (stoic-quotes.com kullanıyoruz)
+    // 1. Çalışan Stoic API'den sözü al
     const sozYaniti = await fetch("https://stoic-quotes.com/api/quote");
-    
     if (!sozYaniti.ok) throw new Error(`Stoic API hatası! Durum: ${sozYaniti.status}`);
-    
     const sozVerisi = await sozYaniti.json();
     
-    // YENİ API'DE VERİ YAPISI FARKLI: sozVerisi.text ve sozVerisi.author
     const orijinalSoz = sozVerisi.text; 
     const yazar = sozVerisi.author;
-
-    if (!orijinalSoz) throw new Error("API'den söz alınamadı.");
 
     // 2. Gemini API Key Kontrolü
     const geminiApiKey = process.env.GEMINI_API_KEY;
@@ -25,11 +21,12 @@ export default async function handler(request, response) {
       throw new Error("GEMINI_API_KEY Vercel ayarlarında bulunamadı!");
     }
 
-    // 3. Gemini API'ye istek at
-    const komut = `Bir API gibi davran. Şu sözü Türkçeye çevir ve kısaca (maksimum 2 cümle) açıkla: "${orijinalSoz}"`;
+    // 3. Gemini 3 Flash Preview API İsteği
+    const komut = `Bir API gibi davran. Şu bilgece stoik sözü Türkçeye çevir ve derin ama kısa bir açıklama ekle: "${orijinalSoz}"`;
     
+    // URL'de model ismini gemini-3-flash-preview olarak güncelledik
     const geminiYaniti = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,16 +37,17 @@ export default async function handler(request, response) {
     const geminiVerisi = await geminiYaniti.json();
 
     if (geminiVerisi.error) {
-      throw new Error(`Gemini API Hatası: ${geminiVerisi.error.message}`);
+      throw new Error(`Gemini 3 Hatası: ${geminiVerisi.error.message}`);
     }
 
-    const aciklamaliCeviri = geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text || "Çeviri yapılamadı.";
+    const aciklamaliCeviri = geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text || "Çeviri şu an yapılamıyor.";
 
-    // 4. Başarılı sonuç
+    // 4. JSON formatında temiz çıktı gönder
     return response.status(200).json({
       yazar,
       orijinal_soz: orijinalSoz,
-      turkce_aciklama: aciklamaliCeviri,
+      turkce_aciklama: aciklamaliCeviri.trim(),
+      model: "Gemini 3 Flash Preview" // Hangi modelin çalıştığını görmek için ekledim
     });
 
   } catch (error) {
