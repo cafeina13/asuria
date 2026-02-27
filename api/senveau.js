@@ -9,10 +9,11 @@ export default async function handler(request, response) {
   try {
     // 1. Çalışan Stoic API'den sözü al
     const sozYaniti = await fetch("https://stoic-quotes.com/api/quote");
-    if (!sozYaniti.ok) throw new Error(`Stoic API hatası! Durum: ${sozYaniti.status}`);
+    if (!sozYaniti.ok)
+      throw new Error(`Stoic API hatası! Durum: ${sozYaniti.status}`);
     const sozVerisi = await sozYaniti.json();
-    
-    const orijinalSoz = sozVerisi.text; 
+
+    const orijinalSoz = sozVerisi.text;
     const yazar = sozVerisi.author;
 
     // 2. Gemini API Key Kontrolü
@@ -24,20 +25,20 @@ export default async function handler(request, response) {
     const komut = `sözü Türkçeye çevir ve altına en fazla 2-3 cümlelik derin bir açıklama ekle. 
     KURAL: Sadece düz metin olarak cevap ver. Asla JSON formatı, Markdown veya kod bloğu kullanma.
     Söz: "${orijinalSoz}"`;
-    
+
     const geminiYaniti = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           contents: [{ parts: [{ text: komut }] }],
           // Cevabın daha yaratıcı değil, daha doğrudan olması için sıcaklığı (temperature) düşürebiliriz
           generationConfig: {
-            temperature: 0.1, 
-          }
+            temperature: 0.1,
+          },
         }),
-      }
+      },
     );
 
     const geminiVerisi = await geminiYaniti.json();
@@ -46,16 +47,14 @@ export default async function handler(request, response) {
       throw new Error(`Gemini 3 Hatası: ${geminiVerisi.error.message}`);
     }
 
-    const aciklamaliCeviri = geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text || "Çeviri şu an yapılamıyor.";
+    const aciklamaliCeviri =
+      geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Çeviri şu an yapılamıyor.";
+
+    const sonCikti = `Yazar: ${yazar}\nOrijinal Söz: ${orijinalSoz}\nTürkçe Çeviri ve Açıklama: ${aciklamaliCeviri.trim()}`;
 
     // 4. JSON formatında temiz çıktı gönder
-    return response.status(200).json({
-      yazar,
-      orijinal_soz: orijinalSoz,
-      turkce_aciklama: aciklamaliCeviri.trim(),
-      model: "Gemini 3 Flash Preview" // Hangi modelin çalıştığını görmek için ekledim
-    });
-
+    return response.status(200).send(sonCikti);
   } catch (error) {
     console.error("Hata Detayı:", error.message);
     return response.status(500).json({
