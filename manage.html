@@ -79,7 +79,7 @@
   <body>
     <div class="container">
       <div class="nav"><a href="/">&larr; Yeni API Oluşturucuya Dön</a></div>
-      <h2>⚙️ Kayıtlı API'ler</h2>
+      <h2>Kayıtlı API'ler</h2>
 
       <div id="apiList">Yükleniyor...</div>
 
@@ -140,14 +140,14 @@
         });
 
         if (res.ok) {
-          btn.innerText = "✅ Başarıyla Kaydedildi!";
+          btn.innerText = "Başarıyla Kaydedildi!";
           btn.style.background = "#10b981";
           setTimeout(() => {
             btn.innerText = "Değişiklikleri Kaydet";
             yukle();
           }, 2000);
         } else {
-          btn.innerText = "❌ Hata Oluştu";
+          btn.innerText = "Hata Oluştu";
           btn.style.background = "#ef4444";
         }
       }

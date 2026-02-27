@@ -27,7 +27,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>🚀 API Fabrikası</h2>
+        <h2>API Fabrikası</h2>
         
         <label>Asıl API Adresi (Hedef)</label>
         <input type="text" id="targetUrl" placeholder="https://api.example.com/data">
@@ -41,7 +41,7 @@
         <button class="btn-primary" onclick="createAPI()">Sistemi Kur</button>
         
         <!-- İŞTE BURASI: YÖNETİM PANELİNE GİDİŞ BUTONU -->
-        <a href="/manage.html" class="btn-secondary">⚙️ Yönetim Paneline Git</a>
+        <a href="/manage.html" class="btn-secondary">Yönetim Paneline Git</a>
 
         <div id="status"></div>
     </div>
@@ -71,7 +71,7 @@
                 
                 if (res.ok) {
                     status.className = 'success';
-                    status.innerHTML = `✅ <b>${payload.apiName}</b> hazır!<br>Adres: <a href="/api/${payload.slug}" style="color:white" target="_blank">/api/${payload.slug}</a><br><small>Vercel'in dosyayı tanıması 1-2 dk sürebilir.</small>`;
+                    status.innerHTML = `<b>${payload.apiName}</b> hazır!<br>Adres: <a href="/api/${payload.slug}" style="color:white" target="_blank">/api/${payload.slug}</a><br><small>Vercel'in dosyayı tanıması 1-2 dk sürebilir.</small>`;
                     
                     // İşlem bitince kutuları temizle
                     document.getElementById('targetUrl').value = '';
@@ -82,7 +82,7 @@
                 }
             } catch (err) {
                 status.className = 'error';
-                status.innerText = "❌ Hata: " + err.message;
+                status.innerText = "Hata: " + err.message;
             }
         }
     </script>
