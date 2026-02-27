@@ -50,11 +50,9 @@ export default async function handler(request, response) {
     response.status(200).json(sonuc);
   } catch (error) {
     // Bir hata olursa, hatayı bildir
-    response
-      .status(500)
-      .json({
-        hata: "API işlenirken bir sorun oluştu.",
-        detay: `Hata: ${error.message} Lütfen tekrar deneyin. ${sonuc}`,
-      });
+    response.status(500).json({
+      hata: "API işlenirken bir sorun oluştu.",
+      detay: `Hata: ${error.message} Lütfen tekrar deneyin.`,
+    });
   }
 }
