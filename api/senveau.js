@@ -21,16 +21,22 @@ export default async function handler(request, response) {
       throw new Error("GEMINI_API_KEY Vercel ayarlarında bulunamadı!");
     }
 
-    // 3. Gemini 3 Flash Preview API İsteği
-    const komut = `Bir API gibi davran. Şu bilgece stoik sözü Türkçeye çevir ve derin ama kısa bir açıklama ekle: "${orijinalSoz}"`;
+    const komut = `sözü Türkçeye çevir ve altına en fazla 2-3 cümlelik derin bir açıklama ekle. 
+    KURAL: Sadece düz metin olarak cevap ver. Asla JSON formatı, Markdown veya kod bloğu kullanma.
+    Söz: "${orijinalSoz}"`;
     
-    // URL'de model ismini gemini-3-flash-preview olarak güncelledik
     const geminiYaniti = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: komut }] }] }),
+        body: JSON.stringify({ 
+          contents: [{ parts: [{ text: komut }] }],
+          // Cevabın daha yaratıcı değil, daha doğrudan olması için sıcaklığı (temperature) düşürebiliriz
+          generationConfig: {
+            temperature: 0.1, 
+          }
+        }),
       }
     );
 
