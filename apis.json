@@ -1,6 +1,6 @@
 [
   {
-    "apiName": "Marcus & Seneca Stoic API",
+    "apiName": "Stoic API",
     "targetUrl": "https://stoic-quotes.com/api/quote",
     "slug": "senveau",
     "isActive": true
