@@ -51,7 +51,7 @@ export default async function handler(request, response) {
       geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Çeviri şu an yapılamıyor.";
 
-    const sonCikti = `Yazar: ${yazar}\nOrijinal Söz: ${orijinalSoz}\nTürkçe Çeviri ve Açıklama: ${aciklamaliCeviri.trim()}`;
+    const sonCikti = `Orijinal Söz: ${orijinalSoz}\nYazar: ${yazar}\nTürkçe Çeviri ve Açıklama: ${aciklamaliCeviri.trim()}`;
 
     // 4. JSON formatında temiz çıktı gönder
     return response.status(200).send(sonCikti);
