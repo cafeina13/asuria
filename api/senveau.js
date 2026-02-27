@@ -22,8 +22,8 @@ export default async function handler(request, response) {
       throw new Error("GEMINI_API_KEY Vercel ayarlarında bulunamadı!");
     }
 
-    const komut = `sözü Türkçeye çevir ve altına en fazla 2-3 cümlelik derin bir açıklama ekle. 
-    KURAL: Sadece düz metin olarak cevap ver. Asla JSON formatı, Markdown veya kod bloğu kullanma.
+    const komut = `sözü en fazla 2-3 cümlelik derin bir açıklama ekle. 
+    KURAL: Sadece düz metin olarak cevap ver. Asla JSON formatı, Markdown veya kod bloğu kullanma. cevabını api çıktısı olarak kullanacağım, bana sadece düz metin ver ben gerisini halledeceğim, açıklama dışında bir metin olmasın.
     Söz: "${orijinalSoz}"`;
 
     const geminiYaniti = await fetch(
@@ -47,12 +47,12 @@ export default async function handler(request, response) {
       throw new Error(`Gemini 3 Hatası: ${geminiVerisi.error.message}`);
     }
 
-    const aciklamaliCeviri =
+    const aciklama =
       geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Çeviri şu an yapılamıyor.";
+      "Açıklama şu an yapılamıyor.";
 
     /////////////////////////// ${aciklamaliCeviri.trim()}
-    const sonCikti = `${yazar},${orijinalSoz} .::. ${aciklamaliCeviri.trim()}`;
+    const sonCikti = `${yazar},${orijinalSoz}::. ${aciklama.trim()}`;
 
     // 4. JSON formatında temiz çıktı gönder
     return response.status(200).send(sonCikti);
