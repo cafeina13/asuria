@@ -35,6 +35,10 @@ export default async function handler(request, response) {
     const geminiVerisi = await geminiYaniti.json();
     const aciklamaliCeviri = geminiVerisi.candidates[0].content.parts[0].text;
 
+    if (geminiVerisi.error) {
+      throw new Error(`Gemini Hatası: ${geminiVerisi.error.message}`);
+    }
+
     // gönderilecek son formatı oluştur
     const sonuc = {
       yazar: yazar,
@@ -48,6 +52,9 @@ export default async function handler(request, response) {
     // Bir hata olursa, hatayı bildir
     response
       .status(500)
-      .json({ hata: "API işlenirken bir sorun oluştu.", detay: error.message });
+      .json({
+        hata: "API işlenirken bir sorun oluştu.",
+        detay: `Hata: ${error.message} Lütfen tekrar deneyin. ${sonuc}`,
+      });
   }
 }
