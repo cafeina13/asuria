@@ -52,7 +52,7 @@ export default async function handler(request, response) {
       "Çeviri şu an yapılamıyor.";
 
     /////////////////////////// ${aciklamaliCeviri.trim()}
-    const sonCikti = `${yazar},${orijinalSoz} `;
+    const sonCikti = `${yazar},${orijinalSoz} .::. ${aciklamaliCeviri.trim()}`;
 
     // 4. JSON formatında temiz çıktı gönder
     return response.status(200).send(sonCikti);
