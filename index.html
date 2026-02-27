@@ -1,48 +1,147 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <title>API Fabrikası</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Gateway Creator</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #sonuc { margin-top: 15px; font-size: 14px; word-break: break-all; color: #28a745; }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #0f172a;
+        color: white;
+        margin: 0;
+      }
+      .card {
+        background: #1e293b;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        width: 400px;
+        border: 1px solid #334155;
+      }
+      h2 {
+        margin-top: 0;
+        color: #38bdf8;
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+        font-size: 14px;
+        color: #94a3b8;
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #0f172a;
+        color: white;
+        box-sizing: border-box;
+        outline: none;
+      }
+      input:focus {
+        border-color: #38bdf8;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #38bdf8;
+        color: #0f172a;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 25px;
+        transition: 0.3s;
+      }
+      button:hover {
+        background: #7dd3fc;
+        transform: translateY(-2px);
+      }
+      #status {
+        margin-top: 20px;
+        font-size: 13px;
+        text-align: center;
+        padding: 10px;
+        border-radius: 6px;
+        display: none;
+      }
+      .success {
+        display: block !important;
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        border: 1px solid #22c55e;
+      }
+      .error {
+        display: block !important;
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border: 1px solid #ef4444;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="card">
-        <h2>🚀 API Fabrikası</h2>
-        <p>Yeni bir Stoic-Gemini API'si oluştur.</p>
-        <input type="text" id="apiName" placeholder="API İsmi (Ör: Marcus Günlüğü)">
-        <input type="text" id="slug" placeholder="Custom Adres (Ör: marcus-api)">
-        <button onclick="olustur()">API Oluştur</button>
-        <div id="sonuc"></div>
+      <h2>🚀 API Fabrikası</h2>
+
+      <label>Asıl API Adresi (Hedef)</label>
+      <input
+        type="text"
+        id="targetUrl"
+        placeholder="https://api.example.com/data"
+      />
+
+      <label>API'ye Verilecek İsim</label>
+      <input type="text" id="apiName" placeholder="Hava Durumu API" />
+
+      <label>Custom Uzantı (Slug)</label>
+      <input type="text" id="slug" placeholder="hava-durumu" />
+
+      <button onclick="createAPI()">Sistemi Kur</button>
+      <div id="status"></div>
     </div>
 
     <script>
-        async function olustur() {
-            const apiName = document.getElementById('apiName').value;
-            const slug = document.getElementById('slug').value;
-            const sonucDiv = document.getElementById('sonuc');
-            
-            sonucDiv.innerText = "İşleniyor, lütfen bekleyin...";
+      async function createAPI() {
+        const status = document.getElementById("status");
+        const payload = {
+          targetUrl: document.getElementById("targetUrl").value,
+          apiName: document.getElementById("apiName").value,
+          slug: document.getElementById("slug").value,
+        };
 
-            const response = await fetch('/api/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ apiName, slug })
-            });
+        if (!payload.targetUrl || !payload.slug)
+          return alert("Eksik alan bırakmayın!");
 
-            const data = await response.json();
-            if (response.ok) {
-                sonucDiv.innerHTML = `✅ ${data.mesaj}<br><br><i>Not: Vercel'in yeni dosyayı tanıması 1-2 dakika sürebilir.</i>`;
-            } else {
-                sonucDiv.innerText = "❌ Hata: " + data.hata;
-            }
+        status.className = "";
+        status.innerText = "GitHub'a bağlanılıyor ve dosya oluşturuluyor...";
+        status.style.display = "block";
+
+        try {
+          const res = await fetch("/api/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            status.className = "success";
+            status.innerHTML = `✅ <b>${payload.apiName}</b> hazır!<br>Adres: <a href="/api/${payload.slug}" style="color:white" target="_blank">/api/${payload.slug}</a><br><small>Vercel'in dosyayı tanıması 1-2 dk sürebilir.</small>`;
+          } else {
+            throw new Error(data.hata || "Bilinmeyen hata");
+          }
+        } catch (err) {
+          status.className = "error";
+          status.innerText = "❌ Hata: " + err.message;
         }
+      }
     </script>
-</body>
+  </body>
 </html>

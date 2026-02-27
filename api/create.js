@@ -1,53 +1,41 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).send('Sadece POST');
+  // Sadece form gönderildiğinde çalış
+  if (req.method !== "POST") return res.status(405).send("Hata");
 
-  const { slug, apiName } = req.body;
-  const token = process.env.GITHUB_TOKEN; // Vercel'e eklediğin anahtar
-  const REPO_OWNER = "cafeina13"; // GitHub kullanıcı adın
-  const REPO_NAME = "asuria"; // Repo adın
+  const { targetUrl, slug } = req.body; // Formdan gelen URL ve Uzantı
+  const token = process.env.GITHUB_TOKEN; // GitHub yetki anahtarın
 
-  // Yeni API dosyası için şablon (Senin kullandığın kodun aynısı)
-  const template = `
-export default async function handler(request, response) {
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Content-Type", "text/plain; charset=utf-8");
+  // SENİN İSTEDİĞİN ÇOK BASİT ŞABLON (Yeni oluşacak dosyanın içeriği)
+  const sablon = `
+export default async function handler(req, res) {
   try {
-    const res = await fetch("https://stoic-quotes.com/api/quote");
-    const data = await res.json();
-    const geminiKey = process.env.GEMINI_API_KEY;
-    const prompt = "Bu sözü Türkçe açıkla: " + data.text;
-    const geminiRes = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" + geminiKey, {
-      method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
-    });
-    const gData = await geminiRes.json();
-    const desc = gData.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "[Kota Dolu]";
-    return response.status(200).send(data.author + "," + data.text + "::. " + desc);
+    const response = await fetch("${targetUrl}");
+    const data = await response.text();
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    return res.status(200).send(data);
   } catch (e) {
-    return response.status(500).send("Hata: " + e.message);
+    return res.status(500).send("Hata oluştu");
   }
 }`;
 
-  // GitHub API'sine dosyayı yükle emri veriyoruz
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/api/${slug}.js`;
-  
+  // GitHub'a "Dosya Oluştur" isteği gönderiyoruz
+  const url = `https://api.github.com/repos/cafeina13/asuria/contents/api/${slug}.js`;
+
   const response = await fetch(url, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Authorization': `token ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
+      Authorization: `token ${token}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      message: `${apiName} API'si oluşturuldu`,
-      content: Buffer.from(template).toString('base64'), // Dosya içeriğini base64 yapmalıyız
-    })
+      message: `${slug} API oluşturuldu`,
+      content: Buffer.from(sablon).toString("base64"), // Dosya içeriğini şifreliyoruz (GitHub böyle ister)
+    }),
   });
 
   if (response.ok) {
-    res.status(200).json({ mesaj: `Başarılı! API Adresiniz: https://asuria.vercel.app/api/${slug}` });
+    res.status(200).json({ sonuc: "Tamamdır! API oluşturuldu." });
   } else {
-    const hata = await response.json();
-    res.status(500).json({ hata: hata.message });
+    res.status(500).json({ sonuc: "GitHub hatası oluştu." });
   }
 }
