@@ -78,13 +78,13 @@ export default async function handler(req, res) {
 
   try {
 
-    let fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=37.7648&longitude=30.5566&current_weather=true`;
+    let fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=37.7648&longitude=30.5566&current_weather=true&timezone=auto`;
     if (sehir) {
       const sehirKoordinatlari = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sehir)}&format=json&limit=1`, {
         headers: { 'User-Agent': 'Asuria-Weather-App' }});
       const koordinatData = await sehirKoordinatlari.json();
       if (koordinatData.length !== 0) {
-        fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${koordinatData[0].lat}&longitude=${koordinatData[0].lon}&current_weather=true`;
+        fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${koordinatData[0].lat}&longitude=${koordinatData[0].lon}&current_weather=true&timezone=auto`;
       }
     }
     
@@ -103,10 +103,11 @@ export default async function handler(req, res) {
     const ruzgar = havaData.current_weather.windspeed;
     const havaKodu = havaData.current_weather.weathercode;
     const havaDurumu = weatherMap[havaKodu] || "Bilinmeyen Hava Durumu";
+    const zaman = havaData.current_weather.time.split("T")[1];
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
 
-    const cikti = `Kediii: ${kediFact.fact}\nAnlık ${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu: ${havaDurumu}\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h`;
+    const cikti = `Kediii: ${kediFact.fact}\n${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu: ${havaDurumu}\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/hEn son güncelleme: ${zaman}\n`;
 
     return res.status(200).send(cikti);
 
