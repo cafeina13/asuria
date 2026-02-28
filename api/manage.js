@@ -29,6 +29,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ hata: "Yetkisiz erişim! Şifre yanlış." });
     }
     const yeniListe = req.body;
+    delete yeniListe.password;
 
     const getJson = await fetch(jsonUrl, {
       headers: { Authorization: `token ${token}` },
