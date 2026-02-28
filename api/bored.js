@@ -107,7 +107,7 @@ export default async function handler(req, res) {
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
 
-    const cikti = `Kediii: ${kediFact.fact}\n${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu: ${havaDurumu}\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/hEn son güncelleme: ${zaman}\n`;
+    const cikti = `Kediii: ${kediFact.fact}\n${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu: ${havaDurumu}\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h\nEn son güncelleme: ${zaman}`;
 
     return res.status(200).send(cikti);
 
