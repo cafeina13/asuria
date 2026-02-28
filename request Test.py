@@ -11,7 +11,7 @@ def api_test_et_plain_text(URL):
         
         if response.status_code == 200: #200 ok
             gelen_veri = response.text
-            print(f"Gelen Yanıt: {gelen_veri}")
+            print(f"Gelen Yanıt:\n{gelen_veri}")
         else:
             print(f"Hata Oluştu! Durum Kodu: {response.status_code}")
             print(f"Mesaj: {response.text}")

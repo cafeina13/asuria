@@ -42,7 +42,7 @@ export default async function handler(req, res) {
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
 
-    const cikti = `Kediii: ${data.fact}\n\nAnlık Hava Durumu:\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h`;
+    const cikti = `Kediii: ${data.fact}\nAnlık Hava Durumu:\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h`;
 
     return res.status(200).send(cikti);
 
