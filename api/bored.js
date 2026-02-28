@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     catch (error) {return res.status(500).send("Hata oluştu: " + error.message);}
 
   try {
-    const response = await fetch("https://www.boredapi.com/api/activity");
+    const response = await fetch("https://catfact.ninja/fact");
     const data = await response.text();
 
     const havaRes = await fetch("https://api.open-meteo.com/v1/forecast?latitude=41.0082&longitude=28.9784&current_weather=true");
