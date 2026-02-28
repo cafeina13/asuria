@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   const REPO_OWNER = "cafeina13";
   const REPO_NAME = "asuria";
 
-  // BASİT API ŞABLONUN
+  // API ŞABLONUN
   const sablon = `
   const KAPALI_YAZISI = "Bu API şu anda Dans Etmeye gitti ne zaman gelir belli değil.";
 
@@ -45,7 +45,6 @@ export default async function handler(req, res) {
         
         // Eğer listede varsa ve panelden kapatılmışsa (isActive: false)
         if (buApi && buApi.isActive === false) {
-          // GEMİNİ'YE GİTMEDEN DOĞRUDAN BELİRLEDİĞİN YAZIYI GÖNDER VE DUR
           return response.status(200).send(KAPALI_YAZISI);
         }
       }
@@ -88,7 +87,7 @@ export default async function handler(req, res) {
   });
   if (getJson.ok) {
     const data = await getJson.json();
-    sha = data.sha; // Güncelleme yapmak için bu şifre (sha) gerekli
+    sha = data.sha; // Güncelleme yapmak için sha değerini al
     apis = JSON.parse(Buffer.from(data.content, "base64").toString("utf-8"));
   }
 

@@ -23,7 +23,6 @@ export default async function handler(req, res) {
         
         // Eğer listede varsa ve panelden kapatılmışsa (isActive: false)
         if (buApi && buApi.isActive === false) {
-          // GEMİNİ'YE GİTMEDEN DOĞRUDAN BELİRLEDİĞİN YAZIYI GÖNDER VE DUR
           return response.status(200).send(KAPALI_YAZISI);
         }
       }
@@ -34,8 +33,19 @@ export default async function handler(req, res) {
   try {
     const response = await fetch("https://www.boredapi.com/api/activity");
     const data = await response.text();
+
+    const havaRes = await fetch("https://api.open-meteo.com/v1/forecast?latitude=41.0082&longitude=28.9784&current_weather=true");
+    const havaData = await havaRes.json();
+    
+    const sicaklik = havaData.current_weather.temperature;
+    const ruzgar = havaData.current_weather.windspeed;
+
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    return res.status(200).send(data);
+
+    const cikti = `Önerilen Aktivite: ${data}\n\nAnlık Hava Durumu:\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h`;
+
+    return res.status(200).send(cikti);
+
   } catch (e) {
     return res.status(500).send("Hata oluştu");
   }
