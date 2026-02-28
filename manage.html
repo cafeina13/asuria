@@ -113,7 +113,8 @@
       // Sayfa açıldığında API'leri getir
       async function yukle() {
         const res = await fetch("/api/manage");
-        mevcutApiler = await res.json();
+        const data = await res.json();
+        mevcutApiler = data.apis ? data.apis : data;
 
         const listeDiv = document.getElementById("apiList");
         listeDiv.innerHTML = "";
