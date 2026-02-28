@@ -1,7 +1,7 @@
 import requests
 
 
-TestUrl = "https://asuria.vercel.app/api/bored" # test 
+TestUrl = "https://api.open-meteo.com/v1/forecast?latitude=37.7648&longitude=30.5566&current_weather=true" # test 
 
 def api_test_et_plain_text(URL):
     print("--- API Fabrikasına Bağlanılıyor ---")

@@ -1,6 +1,50 @@
 
 const KAPALI_YAZISI = "Bu API şu anda Dans Etmeye gitti ne zaman gelir belli değil.";
 
+const weatherMap = {
+  // --- AÇIK VE BULUTLU ---
+  0: "Açık ve Güneşli",
+  1: "Çoğunlukla Açık",
+  2: "Parçalı Bulutlu",
+  3: "Bulutlu / Kapalı",
+
+  // --- SİS VE PUS ---
+  45: "Sisli",
+  48: "Kırağılı Sis (Buzlanan Sis)",
+
+  // --- ÇİSENTİ (DRIZZLE) ---
+  51: "Hafif Çisenti",
+  53: "Orta Şiddette Çisenti",
+  55: "Yoğun Çisenti",
+  56: "Hafif Dondurucu Çisenti",
+  57: "Yoğun Dondurucu Çisenti",
+
+  // --- YAĞMUR ---
+  61: "Hafif Yağmurlu",
+  63: "Yağmurlu",
+  65: "Şiddetli Yağmurlu",
+  66: "Hafif Dondurucu Yağmur",
+  67: "Şiddetli Dondurucu Yağmur",
+
+  // --- KAR ---
+  71: "Hafif Kar Yağışlı",
+  73: "Orta Şiddette Kar Yağışlı",
+  75: "Yoğun Kar Yağışlı",
+  77: "Kar Taneleri (Kar Kumcuğu)",
+
+  // --- SAĞANAK (SHOWERS) ---
+  80: "Hafif Yağmur Sağanağı",
+  81: "Yağmur Sağanağı",
+  82: "Şiddetli Yağmur Sağanağı",
+  85: "Hafif Kar Sağanağı",
+  86: "Şiddetli Kar Sağanağı",
+
+  // --- FIRTINA VE DOLU ---
+  95: "Gök Gürültülü Fırtına",
+  96: "Hafif Dolu Eşliğinde Fırtına",
+  99: "Şiddetli Dolu ve Fırtına"
+};
+
 export default async function handler(req, res) {
 
   const sehir = req.query.sehir;
@@ -57,10 +101,12 @@ export default async function handler(req, res) {
 
     const sicaklik = havaData.current_weather.temperature;
     const ruzgar = havaData.current_weather.windspeed;
+    const havaKodu = havaData.current_weather.weathercode;
+    const havaDurumu = weatherMap[havaKodu] || "Bilinmeyen Hava Durumu";
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
 
-    const cikti = `Kediii: ${kediFact.fact}\nAnlık ${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu:\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h`;
+    const cikti = `Kediii: ${kediFact.fact}\nAnlık ${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu: ${havaDurumu}\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h`;
 
     return res.status(200).send(cikti);
 
