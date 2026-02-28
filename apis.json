@@ -4,13 +4,13 @@
       "apiName": "Stoic API",
       "targetUrl": "https://stoic-quotes.com/api/quote",
       "slug": "senveau",
-      "isActive": false
+      "isActive": true
     },
     {
       "apiName": "Activite önerici",
       "targetUrl": "https://www.boredapi.com/api/activity",
       "slug": "bored",
-      "isActive": false
+      "isActive": true
     }
   ]
 }
