@@ -1,7 +1,7 @@
 import requests
 
 
-TestUrl = "https://asuria.vercel.app/api/bored" #API Fabrikası URL'si
+TestUrl = "https://asuria.vercel.app/api/bored" # test 
 
 def api_test_et_plain_text(URL):
     print("--- API Fabrikasına Bağlanılıyor ---")
