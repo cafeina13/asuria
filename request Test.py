@@ -3,9 +3,7 @@ import requests
 
 TestUrl = "https://asuria.vercel.app/api/bored" # test 
 
-def api_test_et_plain_text(URL):
-    print("--- API Fabrikasına Bağlanılıyor ---")
-    
+def api_test_et_plain_text(URL):    
     try:
         response = requests.get(URL)
         
