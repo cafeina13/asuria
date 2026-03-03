@@ -62,7 +62,8 @@ export default async function handler(req, res) {
       });
 
       if (jsonCheckRes.ok) {
-        const apisList = jsonCheckRes.apis ? jsonCheckRes.apis : jsonCheckRes;
+        const jsonRes = await jsonCheckRes.json();
+        const apisList = jsonRes.apis ? jsonRes.apis : jsonRes;
 
         // Kendi ismini listede arıyor
         const buApi = apisList.find(api => api.slug === "bored");
