@@ -10,7 +10,7 @@
       "apiName": "Activite önerici",
       "targetUrl": "https://www.boredapi.com/api/activity",
       "slug": "bored",
-      "isActive": false
+      "isActive": true
     }
   ]
 }
