@@ -145,8 +145,9 @@ function kesinlestir(index) {
         updateOtoBut(true);
         updateGUI();
         renderKadro();
+        showToast(`${hoca.name} derse girdi!`);
     } else if (butSayisi < hoca.cost) {
-        console.log("Yeterli büt yok!");
+        showToast("Yeterli büt yok! Biraz daha az çabala...");
     }
 }
 
@@ -160,8 +161,9 @@ function kopyaCek(index) {
         updateManuelBut();
         updateGUI();
         renderKopyaSheet();
+        showToast(`${kopya.name} uygulanıyor!`);
     } else if (butSayisi < kopya.cost) {
-        console.log("Yeterli büt yok!");
+        showToast("Yeterli büt yok! Biraz daha az çabala...");
     }
 }
 
@@ -205,3 +207,23 @@ setInterval(() => {
         updateGUI();
     }
 }, 1000);
+
+
+function showToast(mesaj) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = mesaj;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}

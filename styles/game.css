@@ -93,3 +93,24 @@ body {
 }
 .buy-btn:hover:not(:disabled) { background: #323232; }
 .buy-btn:disabled { background: #707070; cursor: not-allowed; box-shadow: none;}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #414141aa;
+    color: #898989;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+}
