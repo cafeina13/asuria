@@ -34,7 +34,7 @@ body {
     border: none; border-radius: 5px; font-size: 18px; cursor: pointer;
     box-shadow: 0 4px #262626;
 }
-.menu-btn:hover { background: #465c71; }
+.menu-btn:hover { background: #3e3e3e; }
 .menu-btn:active { transform: translateY(2px); box-shadow: 0 2px #1a252f; }
 
 .shopModal {
@@ -89,6 +89,7 @@ body {
 .buy-btn {
     padding: 10px 15px; background: #376c4f; color: rgb(184, 184, 184); border: none;
     border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; max-width: 140px;
+    box-shadow: 0 4px #112219;
 }
 .buy-btn:hover:not(:disabled) { background: #323232; }
-.buy-btn:disabled { background: #707070; cursor: not-allowed; }
+.buy-btn:disabled { background: #707070; cursor: not-allowed; box-shadow: none;}
