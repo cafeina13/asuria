@@ -1,19 +1,17 @@
 body {
     margin: 0; padding: 0; font-family: sans-serif; background-color: #101010;
-    display: flex; height: 100vh; overflow: hidden; /* Sayfa kaydırmasını engeller */
+    display: flex; height: 100vh; overflow: hidden;
 }
-
-/* OYUN ALANI SOL - SAĞ */
 .game-area { display: flex; width: 100%; height: 100%; }
         
 .left-panel {
-    flex: 1; /* Sol tarafın geniş alanı almasını sağlar */
+    flex: 1;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     border-right: 2px solid #868686;
 }
 
 .right-panel {
-    width: 300px; /* Sağ menü sabit genişlikte */
+    width: 300px;
     background: #3b3b3b; display: flex; flex-direction: column; align-items: center; padding-top: 50px;
     display: flex;
     flex-direction: column;
@@ -22,7 +20,6 @@ body {
     padding-top: 20px;
 }
 
-/* SOL PANEL İÇERİKLERİ */
 #score-display { font-size: 40px; margin-bottom: 20px; color: #868686; font-weight: bold; }
         
 #main-btn {
@@ -32,7 +29,6 @@ body {
 }
 #main-btn:active { transform: scale(0.95); box-shadow: 0 2px #454545; }
 
-/* SAĞ PANEL BUTONLARI */
 .menu-btn {
     width: 80%; padding: 15px; background: #424242; color: #a6a4a2;
     border: none; border-radius: 5px; font-size: 18px; cursor: pointer;
@@ -41,11 +37,10 @@ body {
 .menu-btn:hover { background: #465c71; }
 .menu-btn:active { transform: translateY(2px); box-shadow: 0 2px #1a252f; }
 
-/* MODAL (YÜZEN BÜYÜK PENCERE) TASARIMI */
 .shopModal {
-    display: none; /* Başlangıçta gizli */
+    display: none;
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.65); /* Arka planı karartır */
+    background: rgba(0, 0, 0, 0.65);
     justify-content: center; align-items: center; z-index: 100;
 }
 
@@ -68,7 +63,6 @@ body {
 
 .shop-list { padding: 20px; overflow-y: auto; flex: 1; }
 
-/* MAĞAZA LİSTESİ (SATIR TASARIMI) */
 .shop-list::-webkit-scrollbar {
     width: 8px;
 }
@@ -82,8 +76,8 @@ body {
     border-bottom: 1px solid #545454; padding: 15px 0;
 }
 
-.shop-item:last-child { border-bottom: none; } /* Son satırın alt çizgisini siler */
-        
+.shop-item:last-child { border-bottom: none; }
+
 .item-left { display: flex; flex-direction: column; flex: 1.5; }
 .item-name { font-size: 22px; font-weight: bold; color: #398cdf; }
 .item-effect { font-size: 16px; color: #3f84c9; margin-top: 5px; }

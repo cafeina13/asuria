@@ -51,6 +51,7 @@ function updateOtoBut(yenidenHesapla = false) {
     return otoButGucu;
 }
 
+
 function updateManuelBut() {    
     let adder = 0;
     let multiplier = 1;
@@ -74,6 +75,7 @@ function updateManuelBut() {
     manuelButGucu = (multiplier * special) * adder;
     return manuelButGucu;
 }
+
 function updateGUI() {
     document.getElementById('but').textContent = butSayisi;
     document.getElementById('otobut').textContent = ` ${otoButGucu}/s`;
@@ -155,7 +157,7 @@ function kopyaCek(index) {
         butSayisi -= kopya.cost;
         kopya.aktif = true;
 
-        updateManuelBut(true);
+        updateManuelBut();
         updateGUI();
         renderKopyaSheet();
     } else if (butSayisi < kopya.cost) {
