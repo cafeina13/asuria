@@ -97,4 +97,4 @@ body {
     border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; max-width: 140px;
 }
 .buy-btn:hover:not(:disabled) { background: #323232; }
-.buy-btn:disabled { background: #454545; cursor: not-allowed; }
+.buy-btn:disabled { background: #707070; cursor: not-allowed; }
