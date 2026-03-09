@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bütünleme Clicker - Gelişmiş Sürüm</title>
+    <link rel="stylesheet" href="../styles/game.css">
+</head>
+<body>
+
+    <div class="game-area">
+        <div class="left-panel">
+            <div id="score-display">Manuel Büt: <span id="manuelbut">1</span></div>
+            <div id="score-display">Otobüt: <span id="otobut">0/s</span></div>
+            <div id="score-display">Toplam Büt: <span id="but">0</span></div>
+            <button id="main-btn">BÜT!</button>
+        </div>
+
+        <div class="right-panel">
+            <button id="btn-akademisyen" class="menu-btn">Akademisyen</button>
+            <button id="btn-kopya" class="menu-btn">Kopya Kağıdı</button>
+            </div>
+    </div>
+
+    <div id="kadro-modal" class="shopModal">
+        <div class="shopModal-content">
+            <div class="shopModal-header">
+                <h2>Akademisyen Kadrosu</h2>
+                <button id="close-kadroModal" class="close-modal">Kapat</button>
+            </div>
+            <div id="kadro-list" class="shop-list">
+                </div>
+        </div>
+    </div>
+
+    <div id="kopya-modal" class="shopModal">
+        <div class="shopModal-content">
+            <div class="shopModal-header">
+                <h2>Kopya Kağıdı</h2>
+                <button id="close-kopyaModal" class="close-modal">Kapat</button>
+            </div>
+            <div id="kopya-list" class="shop-list">
+                </div>
+        </div>
+    </div>
+
+    <script src="../scripts/game.js"></script>
+</body>
+</html>
