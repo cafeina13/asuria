@@ -13,7 +13,7 @@ let akademisyenList = [
 ];
 
 let kopyaList = [
-    { name: "Sıraya Not", cost: 100, effect: "Manuel Büt +1", effectAciklama: "Yazın çok kötü, her deneme +1 büt", aktif: false, buff: ["adder", 1] },
+    { name: "Sıraya Not", cost: 100, effect: "Manuel Büt +1", effectAciklama: "Yazın çok kötü, her deneme +1 büt", aktif: false, buff: ["adder", 2] },
     { name: "Kopya Kağıdı", cost: 500, effect: "manuel büt +10", effectAciklama: "Yazın hâlâ kötü, her deneme +10 büt", aktif: false, buff: ["adder", 50] },
     { name: "Yanındakine Bakış", cost: 2000, effect: "Manuel büt +30", effectAciklama: "Yanındaki de bütünlemeye girdiğine göre, +30", aktif: false, buff: ["adder", 200] },
     { name: "Önündekine bakış", cost: 10000, effect: "2 Kat Manuel Büt kazancı", effectAciklama: "Gözün bozuk, her denemede 2 kat büt (en son hesaplanır) ", aktif: false, buff: ["special", 2] },
@@ -88,7 +88,7 @@ function renderKadro() {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'shop-item';
 
-        let btnText = hoca.aktif ? "Derste" : `Kesinleştir (${hoca.cost})`;
+        let btnText = hoca.aktif ? "Derste" : `Kesinleştir<br>(${hoca.cost} Büt)`;
         let btnDisabled = hoca.aktif ? "disabled" : "";
 
         itemDiv.innerHTML = `
@@ -115,7 +115,7 @@ function renderKopyaSheet() {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'shop-item';
 
-        let btnText = kopya.aktif ? "Derste" : `Kesinleştir (${kopya.cost})`;
+        let btnText = kopya.aktif ? "Uygulanıyor" : `Uygula<br>(${kopya.cost} Büt)`;
         let btnDisabled = kopya.aktif ? "disabled" : "";
 
         itemDiv.innerHTML = `
@@ -127,7 +127,7 @@ function renderKopyaSheet() {
                         <span class="item-desc">${kopya.effectAciklama}</span>
                     </div>
                     <div class="item-right">
-                        <button class="buy-btn" onclick="satinAl(${index})" ${btnDisabled}>${btnText}</button>
+                        <button class="buy-btn" onclick="kopyaCek(${index})" ${btnDisabled}>${btnText}</button>
                     </div>`;
         shopList.appendChild(itemDiv);
     });
