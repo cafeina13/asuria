@@ -71,7 +71,7 @@ function updateManuelBut() {
             }
         }
     }
-
+    multiplier = Math.round(multiplier)
     manuelButGucu = (multiplier * special) * adder;
     return manuelButGucu;
 }
