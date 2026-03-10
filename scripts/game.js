@@ -7,9 +7,14 @@ let akademisyenList = [
     { name: "Lain Hoca", cost: 50, effect: "Otomatik 5 Büt", effectAciklama: "Her saniye 5 büt üretir", aktif: false, buff: ["adder", 5] },
     { name: "Fatma Hoca", cost: 300, effect: "Otomatik 20 Büt", effectAciklama: "Her saniye 20 büt üretir", aktif: false, buff: ["adder", 20] },
     { name: "Sena Hoca", cost: 2000, effect: "Double Büt çarpanı (2x)", effectAciklama: "Büt çarpanını iki katına çıkarır, en son hesaplanır", aktif: false, buff: ["special", 2] },
-    { name: "Samet Hoca", cost: 3000, effect: "Büt çarpanı +1", effectAciklama: "Büt çarpanına 1 ekler", aktif: false, buff: ["multiplier", 1] },
-    { name: "Erdem Hoca", cost: 12000, effect: "Büt çarpanı +2", effectAciklama: "Büt çarpanına 2 ekler", aktif: false, buff: ["multiplier", 2] },
-    { name: "Gizem Hoca", cost: 100000, effect: "Büt çarpanı +5", effectAciklama: "Büt çarpanına 5 ekler", aktif: false, buff: ["multiplier", 5] },
+    { name: "Samet Hoca", cost: 3000, effect: "OtoBüt çarpanı +1", effectAciklama: "Büt çarpanına 1 ekler", aktif: false, buff: ["multiplier", 1] },
+    { name: "Erdem Hoca", cost: 12000, effect: "OtoBüt çarpanı +2", effectAciklama: "Büt çarpanına 2 ekler", aktif: false, buff: ["multiplier", 2] },
+    { name: "Gizem Hoca", cost: 100000, effect: "OtoBüt çarpanı +5", effectAciklama: "Büt çarpanına 5 ekler", aktif: false, buff: ["multiplier", 5] },
+    { name: "Jhonny Test", cost: 300000, effect: "Quadra Büt Çarpanı (4x)", effectAciklama: "Büt çarpanını 4 katına çıkarır, en son hesaplanır", aktif: false, buff: ["special",4]},
+    { name: "Mordecai Hoca", cost: 1000000, effect: "OtoBüt çarpanı +10", effectAciklama: "Büt çarpanına 10 ekler", aktif: false, buff: ["multiplier", 10] },
+    { name: "Rektör Skips", cost: 4000000, effect: "OtoBüt çarpanı +20", effectAciklama: "Büt çarpanına 20 ekler", aktif: false, buff: ["multiplier", 20]},
+    { name: "Rigby KNK", cost: 10000000, effect: "OtoBüt çarpanı +50", effectAciklama: "Büt çarpanına 50 ekler", aktif: false, buff: ["multiplier", 50] },
+    { name: "Attack Shark", cost: -10000000, effect: "OtoBüt çarpanı +150", effectAciklama: "Büt çarpanına 50 ekler", aktif: false, buff: ["multiplier", 150] },
 ];
 
 let kopyaList = [
@@ -21,7 +26,7 @@ let kopyaList = [
     { name: "Hocaya Sor", cost: 200000, effect: "Manuel Büt kazancı +100", effectAciklama: "Hocaya soru sordun ama o da bütünlemeye girdiğine göre, her denemede +100 büt", aktif: false, buff: ["adder", 100] },
     { name: "Kopya Çekme Sanatı", cost: 1000000, effect: "3 kat Manuel Büt kazancı çarpanı", effectAciklama: "Kopya çekme sanatında ustalaştın artık önümüzdeki bütlere bakıcaz, her denemede 3x büt", aktif: false, buff: ["multiplier", 3] },
     { name: "Psişik Kopya", cost: 5000000, effect: "5 kat Manuel Büt kazancı çarpanı", effectAciklama: "Psişik güçlerinle kopya çekmeye başladın, her denemede 5x büt", aktif: false, buff: ["multiplier", 5] },
-    { name: "Sallama", cost: 10000000, effect: "-10 kat Manuel Büt kazancı çarpanı", effectAciklama: "Sallamaya başladın, artık bütlerin azlıyor, her denemede -10x büt", aktif: false, buff: ["multiplier", -10] },
+    { name: "Sallama", cost: 10000000, effect: "-10 kat Manuel Büt kazancı çarpanı", effectAciklama: "Sallamaya başladın, artık bütlerin azlıyor, her denemede -10x büt", aktif: false, buff: ["special", -10] },
 ];
 function updateOtoBut(yenidenHesapla = false) {
     if (!yenidenHesapla) {
@@ -40,9 +45,7 @@ function updateOtoBut(yenidenHesapla = false) {
             } else if (hoca.buff[0] === "multiplier") {
                 multiplier += hoca.buff[1];
             } else if (hoca.buff[0] === "special") {
-                if (special === 1) {
-                    special = hoca.buff[1];
-                }
+                special = hoca.buff[1];
             }
         }
     }
@@ -65,9 +68,7 @@ function updateManuelBut() {
             } else if (kopya.buff[0] === "multiplier") {
                 multiplier += kopya.buff[1];
             } else if (kopya.buff[0] === "special") {
-                if (special === 1) {
-                    special = kopya.buff[1];
-                }
+                special = kopya.buff[1];
             }
         }
     }
