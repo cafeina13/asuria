@@ -24,7 +24,8 @@ export default async function handler(request, response) {
 
     // 1. Durum Kontrolü
     if (jsonCheckRes.ok) {
-      const apisList = await jsonCheckRes.json();
+      const jsonRes = await jsonCheckRes.json();
+      const apisList = jsonRes.apis ? jsonRes.apis : jsonRes;
       const buApi = apisList.find(api => api.slug === "senveau");
       if (buApi && buApi.isActive === false) {
         return response.status(200).send(KAPALI_YAZISI);
