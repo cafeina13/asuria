@@ -1,7 +1,7 @@
 import requests
 
 
-TestUrl = "https://asuria.vercel.app/api/bored?sehir=tokyo" # test 
+TestUrl = "https://asuria.vercel.app/api/senveau" # test 
 
 def api_test_et_plain_text(URL):    
     try:
