@@ -1,58 +1,53 @@
 const KAPALI_YAZISI = "Bu API şu anda Dans Etmeye gitti ne zaman gelir belli değil.";
 
 export default async function handler(request, response) {
-  // CORS Ayarları
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  response.setHeader("Content-Type", "text/plain; charset=utf-8"); // Çıktıyı düz metin yapıyoruz
+  response.setHeader("Content-Type", "text/plain; charset=utf-8");
 
   if (request.method === "OPTIONS") return response.status(200).end();
 
   try {
-      const token = process.env.GITHUB_TOKEN;
-    
-    if (token) {
-      // GitHub'daki listeyi doğrudan düz metin formatında okuyoruz
-      const jsonCheckRes = await fetch("https://api.github.com/repos/cafeina13/asuria/contents/apis.json", {
-        headers: { 
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3.raw' 
-        }
-      });
+    const token = process.env.GITHUB_TOKEN;
 
-      if (jsonCheckRes.ok) {
-        const apisList = await jsonCheckRes.json();
-        
-        // Kendi ismini (senveau) listede arıyor
-        const buApi = apisList.find(api => api.slug === "senveau");
-        
-        // Eğer listede varsa ve panelden kapatılmışsa (isActive: false)
-        if (buApi && buApi.isActive === false) {
-          // GEMİNİ'YE GİTMEDEN DOĞRUDAN BELİRLEDİĞİN YAZIYI GÖNDER VE DUR
-          return response.status(200).send(KAPALI_YAZISI);
-        }
+    // --- İYİLEŞTİRME 1: PARALEL ÇALIŞMA ---
+    // GitHub kontrolü ve Stoic API isteğini AYNI ANDA başlatıyoruz.
+    const [jsonCheckPromise, sozYanitiPromise] = [
+      fetch("https://api.github.com/repos/cafeina13/asuria/contents/apis.json", {
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3.raw' }
+      }),
+      fetch("https://stoic-quotes.com/api/quote")
+    ];
+
+    const [jsonCheckRes, sozYaniti] = await Promise.all([jsonCheckPromise, sozYanitiPromise]);
+
+    // 1. Durum Kontrolü
+    if (jsonCheckRes.ok) {
+      const apisList = await jsonCheckRes.json();
+      const buApi = apisList.find(api => api.slug === "senveau");
+      if (buApi && buApi.isActive === false) {
+        return response.status(200).send(KAPALI_YAZISI);
       }
     }
-  }
-    catch (error) {}
 
-  try {
-    // 1. Çalışan Stoic API'den sözü al (Bu kısım her zaman çalışmalı)
-    const sozYaniti = await fetch("https://stoic-quotes.com/api/quote");
-    if (!sozYaniti.ok) throw new Error("Stoic API şu an kapalı.");
-
+    if (!sozYaniti.ok) throw new Error("Stoic API kapalı.");
     const sozVerisi = await sozYaniti.json();
     const orijinalSoz = sozVerisi.text;
     const yazar = sozVerisi.author;
 
-    // 2. Gemini Kısmı (Hata alsa da kodu durdurmayacak şekilde tasarlıyoruz)
+    // 2. Gemini Kısmı (Zaman Sınırı İle)
     let aciklama = "";
     const geminiApiKey = process.env.GEMINI_API_KEY;
 
     if (geminiApiKey) {
+      // --- İYİLEŞTİRME 2: GEMINI'YE ZAMAN SINIRI (TIMEOUT) ---
+      // Gemini 2.5 saniye içinde cevap vermezse isteği iptal et.
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500); // 2.5 saniye sınırı
+
       try {
-        const komut = `Şu sözü en fazla 2 cümleyle açıkla. Sadece düz metin ver, açıklama dışında bir şey yazma: "${orijinalSoz}"`;
+        const komut = `Şu sözü en fazla 2 cümleyle açıkla. Sadece düz metin ver: "${orijinalSoz}"`;
 
         const geminiYaniti = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
@@ -63,41 +58,28 @@ export default async function handler(request, response) {
               contents: [{ parts: [{ text: komut }] }],
               generationConfig: { temperature: 0.1 },
             }),
-          },
+            signal: controller.signal // İptal sinyalini buraya bağlıyoruz
+          }
         );
 
-        // Eğer yanıt 429 (Too Many Requests) veya başka bir hata koduysa
-        if (geminiYaniti.status === 429) {
-          aciklama = "[Kota doldu]";
-        } else if (!geminiYaniti.ok) {
-          aciklama = "[Yapay zeka şu an meşgul]";
-        } else {
+        clearTimeout(timeoutId); // Yanıt gelirse zamanlayıcıyı temizle
+
+        if (geminiYaniti.ok) {
           const geminiVerisi = await geminiYaniti.json();
-          // Gemini JSON içinde hata dönerse kontrol et
-          if (geminiVerisi.error) {
-            aciklama = "[Günlük limit aşıldı]";
-          } else {
-            aciklama =
-              geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
-              "[Açıklama yapılamadı]";
-          }
+          aciklama = geminiVerisi.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "[Açıklama alınamadı]";
+        } else {
+          aciklama = "[AI meşgul]";
         }
       } catch (geminiHata) {
-        // Gemini API'sine ulaşılamazsa buraya düşer
-        aciklama = "[Bağlantı hatası: Açıklama alınamadı]";
+        // Zaman aşımı olursa veya hata çıkarsa buraya düşer
+        aciklama = geminiHata.name === 'AbortError' ? "[Zaman aşımı: Açıklama hazırlanamadı]" : "[AI Hatası]";
       }
-    } else {
-      aciklama = "[API Key bulunamadı]";
     }
 
-    // 3. Son Çıktı Formatı
-    // İster kota dolsun ister dolmasın, yazar ve söz her zaman gönderilir.
     const sonCikti = `${yazar},${orijinalSoz} :: .${aciklama}`;
-
     return response.status(200).send(sonCikti);
+
   } catch (error) {
-    // Sadece Stoic API çökerse buraya düşer
-    console.error("Hata Detayı:", error.message);
     return response.status(500).send(`Sistem Hatası: ${error.message}`);
   }
 }
