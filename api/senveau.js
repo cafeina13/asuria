@@ -45,7 +45,7 @@ export default async function handler(request, response) {
       // --- İYİLEŞTİRME 2: GEMINI'YE ZAMAN SINIRI (TIMEOUT) ---
       // Gemini 2.5 saniye içinde cevap vermezse isteği iptal et.
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 2.5 saniye sınırı
+      const timeoutId = setTimeout(() => controller.abort(), 3500); // 2.5 saniye sınırı
 
       try {
         const komut = `Şu sözü en fazla 2 cümleyle açıkla. Sadece düz metin ver: "${orijinalSoz}"`;
