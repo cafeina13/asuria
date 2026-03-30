@@ -51,7 +51,7 @@ export default async function handler(request, response) {
         const komut = `Şu sözü en fazla 2 cümleyle açıkla. Sadece düz metin ver: "${orijinalSoz}"`;
 
         const geminiYaniti = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=${geminiApiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
