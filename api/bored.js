@@ -79,20 +79,21 @@ export default async function handler(req, res) {
     let fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=37.7648&longitude=30.5566&current_weather=true&timezone=auto`;
     if (sehir) {
       const sehirKoordinatlari = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sehir)}&format=json&limit=1`, {
-        headers: { 'User-Agent': 'Asuria-Weather-App' }});
+        headers: { 'User-Agent': 'Asuria-Weather-App' }
+      });
       const koordinatData = await sehirKoordinatlari.json();
       if (koordinatData.length !== 0) {
         fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${koordinatData[0].lat}&longitude=${koordinatData[0].lon}&current_weather=true&timezone=auto`;
       }
     }
-    
+
     const [havaResponse, kediResponse] = await Promise.all([
       fetch(fetchUrl),
       fetch("https://catfact.ninja/fact")
     ]);
 
 
-    const [kediFact ,havaData] = await Promise.all([
+    const [kediFact, havaData] = await Promise.all([
       kediResponse.json(),
       havaResponse.json()
     ]);

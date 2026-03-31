@@ -1,38 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Gateway Creator</title>
-    <link rel="stylesheet" href="../styles/index.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../styles/index.css" />
+  </head>
+  <body>
     <div class="card">
-        <h2>API Fabrikası</h2>
-        
-        <label>Asıl API Adresi (Hedef)</label>
-        <input type="text" id="targetUrl" placeholder="https://api.example.com/data">
+      <h2>API Fabrikası</h2>
 
-        <label>API'ye Verilecek İsim</label>
-        <input type="text" id="apiName" placeholder="Hava Durumu API">
+      <label>Asıl API Adresi (Hedef)</label>
+      <input
+        type="text"
+        id="targetUrl"
+        placeholder="https://api.example.com/data"
+      />
 
-        <label>Custom Uzantı (Slug)</label>
-        <input type="text" id="slug" placeholder="hava-durumu">
+      <label>API'ye Verilecek İsim</label>
+      <input type="text" id="apiName" placeholder="Hava Durumu API" />
 
-        <label>Şifre</label>
-        <input type="password" id="password" placeholder="Girmeniz gereken şifre: asuria">
+      <label>Custom Uzantı (Slug)</label>
+      <input type="text" id="slug" placeholder="hava-durumu" />
 
-        <button class="btn-primary" onclick="createAPI()">Sistemi Kur</button>
-        
-        <a href="pages/manage.html" class="btn-secondary">Yönetim Paneline Git</a>
+      <label>Şifre</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Girmeniz gereken şifre: asuria"
+      />
 
-        <a href="pages/game.html" class="btn-secondary">Oyuna Git</a>
+      <button class="btn-primary" onclick="createAPI()">Sistemi Kur</button>
 
-        <div id="status"></div>
+      <a href="pages/manage.html" class="btn-secondary">Yönetim Paneline Git</a>
+
+      <a href="pages/game.html" class="btn-secondary">Oyuna Git</a>
+
+      <div id="status"></div>
     </div>
 
-
     <script src="../scripts/index.js"></script>
-
-</body>
+  </body>
 </html>

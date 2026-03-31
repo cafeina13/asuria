@@ -1,48 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Bütünleme Clicker</title>
-    <link rel="stylesheet" href="../styles/game.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../styles/game.css" />
+  </head>
+  <body>
+    <div class="left-panel">
+      <button id="btn-signUp" class="menu-btn">Kayıt Yaptır!</button>
+      <button id="btn-signIn" class="menu-btn">Turnike</button>
+    </div>
+
+    <div id="sign-up-modal" class="shopModal">
+      <div class="shopModal-content">
+        <div class="shopModal-header">
+          <h2>Öğrenci işleri</h2>
+          <button id="close-sign-up-Modal" class="close-modal">Kapat</button>
+        </div>
+        <label>Ad-Soyad</label>
+        <input type="text" id="username-up-box" placeholder="Kullanıcı Adı" />
+        <label>Şifre giriniz...</label>
+        <input
+          type="password"
+          id="password-up-box"
+          placeholder="Güçlü olmak zorunda değil. ``Trust Me Bro"
+        />
+      </div>
+    </div>
+
+    <div id="sign-in-modal" class="shopModal">
+      <div class="shopModal-content">
+        <div class="shopModal-header">
+          <h2>Turnike</h2>
+          <button id="close-sign-in-Modal" class="close-modal">Kapat</button>
+        </div>
+        <label>Ad-Soyad</label>
+        <input type="text" id="username-in-box" placeholder="Kullanıcı Adı" />
+        <label>Şifre giriniz...</label>
+        <input
+          type="password"
+          id="password-in-box"
+          placeholder="Güvenliği ikna et"
+        />
+      </div>
+    </div>
 
     <div class="game-area">
-        <div class="left-panel">
-            <div id="score-display">Manuel Büt: <span id="manuelbut">1</span></div>
-            <div id="score-display">Otobüt: <span id="otobut">0/s</span></div>
-            <div id="score-display">Toplam Büt: <span id="but">0</span></div>
-            <button id="main-btn">BÜT!</button>
-        </div>
+      <div class="main-panel">
+        <div id="score-display">Manuel Büt: <span id="manuelbut">1</span></div>
+        <div id="score-display">Otobüt: <span id="otobut">0/s</span></div>
+        <div id="score-display">Toplam Büt: <span id="but">0</span></div>
+        <button id="main-btn">BÜT!</button>
+      </div>
 
-        <div class="right-panel">
-            <button id="btn-akademisyen" class="menu-btn">Akademisyen</button>
-            <button id="btn-kopya" class="menu-btn">Kopya Kağıdı</button>
-            </div>
+      <div class="right-panel">
+        <button id="btn-akademisyen" class="menu-btn">Akademisyen</button>
+        <button id="btn-kopya" class="menu-btn">Kopya Kağıdı</button>
+      </div>
     </div>
 
     <div id="kadro-modal" class="shopModal">
-        <div class="shopModal-content">
-            <div class="shopModal-header">
-                <h2>Akademisyen Kadrosu</h2>
-                <button id="close-kadroModal" class="close-modal">Kapat</button>
-            </div>
-            <div id="kadro-list" class="shop-list">
-                </div>
+      <div class="shopModal-content">
+        <div class="shopModal-header">
+          <h2>Akademisyen Kadrosu</h2>
+          <button id="close-kadroModal" class="close-modal">Kapat</button>
         </div>
+        <div id="kadro-list" class="shop-list"></div>
+      </div>
     </div>
 
     <div id="kopya-modal" class="shopModal">
-        <div class="shopModal-content">
-            <div class="shopModal-header">
-                <h2>Kopya Kağıdı</h2>
-                <button id="close-kopyaModal" class="close-modal">Kapat</button>
-            </div>
-            <div id="kopya-list" class="shop-list">
-                </div>
+      <div class="shopModal-content">
+        <div class="shopModal-header">
+          <h2>Kopya Kağıdı</h2>
+          <button id="close-kopyaModal" class="close-modal">Kapat</button>
         </div>
+        <div id="kopya-list" class="shop-list"></div>
+      </div>
     </div>
 
     <script src="../scripts/game.js"></script>
-</body>
+  </body>
 </html>

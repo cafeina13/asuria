@@ -10,9 +10,9 @@ let akademisyenList = [
     { name: "Samet Hoca", cost: 3000, effect: "OtoBüt çarpanı +1", effectAciklama: "Büt çarpanına 1 ekler", aktif: false, buff: ["multiplier", 1] },
     { name: "Erdem Hoca", cost: 12000, effect: "OtoBüt çarpanı +2", effectAciklama: "Büt çarpanına 2 ekler", aktif: false, buff: ["multiplier", 2] },
     { name: "Gizem Hoca", cost: 100000, effect: "OtoBüt çarpanı +5", effectAciklama: "Büt çarpanına 5 ekler", aktif: false, buff: ["multiplier", 5] },
-    { name: "Jhonny Test", cost: 300000, effect: "Quadra Büt Çarpanı (4x)", effectAciklama: "Büt çarpanını 4 katına çıkarır, en son hesaplanır", aktif: false, buff: ["special",4]},
+    { name: "Jhonny Test", cost: 300000, effect: "Quadra Büt Çarpanı (4x)", effectAciklama: "Büt çarpanını 4 katına çıkarır, en son hesaplanır", aktif: false, buff: ["special", 4] },
     { name: "Mordecai Hoca", cost: 1000000, effect: "OtoBüt çarpanı +10", effectAciklama: "Büt çarpanına 10 ekler", aktif: false, buff: ["multiplier", 10] },
-    { name: "Rektör Skips", cost: 4000000, effect: "OtoBüt çarpanı +20", effectAciklama: "Büt çarpanına 20 ekler", aktif: false, buff: ["multiplier", 20]},
+    { name: "Rektör Skips", cost: 4000000, effect: "OtoBüt çarpanı +20", effectAciklama: "Büt çarpanına 20 ekler", aktif: false, buff: ["multiplier", 20] },
     { name: "Rigby KNK", cost: 10000000, effect: "OtoBüt çarpanı +50", effectAciklama: "Büt çarpanına 50 ekler", aktif: false, buff: ["multiplier", 50] },
     { name: "Attack Shark", cost: -10000000, effect: "OtoBüt çarpanı +150", effectAciklama: "Büt çarpanına 50 ekler", aktif: false, buff: ["multiplier", 150] },
 ];
@@ -55,7 +55,7 @@ function updateOtoBut(yenidenHesapla = false) {
 }
 
 
-function updateManuelBut() {    
+function updateManuelBut() {
     let adder = 0;
     let multiplier = 1;
     let special = 1;
@@ -82,6 +82,11 @@ function updateGUI() {
     document.getElementById('otobut').textContent = ` ${otoButGucu}/s`;
     document.getElementById('manuelbut').textContent = manuelButGucu
 }
+
+function renderSignUp(){
+}
+
+
 
 function renderKadro() {
     const shopList = document.getElementById('kadro-list');
