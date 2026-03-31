@@ -19,7 +19,6 @@ export default async function handler(req, res) {
   const REPO_OWNER = "cafeina13";
   const REPO_NAME = "asuria";
 
-  // API ŞABLONUN
   const sablon = `
   const KAPALI_YAZISI = "Bu API şu anda Dans Etmeye gitti ne zaman gelir belli değil.";
 
@@ -29,7 +28,6 @@ export default async function handler(req, res) {
       const token = process.env.GITHUB_TOKEN;
     
     if (token) {
-      // GitHub'daki listeyi doğrudan düz metin formatında okuyoruz
       const jsonCheckRes = await fetch("https://api.github.com/repos/cafeina13/asuria/contents/apis.json", {
         headers: { 
           'Authorization': \`token \${token}\`,
@@ -40,10 +38,8 @@ export default async function handler(req, res) {
       if (jsonCheckRes.ok) {
         const apisList = await jsonCheckRes.json();
         
-        // Kendi ismini listede arıyor
         const buApi = apisList.find(api => api.slug === "${slug}");
         
-        // Eğer listede varsa ve panelden kapatılmışsa (isActive: false)
         if (buApi && buApi.isActive === false) {
           return response.status(200).send(KAPALI_YAZISI);
         }
@@ -62,7 +58,6 @@ export default async function handler(req, res) {
   }
 }`;
 
-  // API JS DOSYASINI OLUŞTUR
   const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/api/${slug}.js`;
   await fetch(apiUrl, {
     method: "PUT",
@@ -76,25 +71,21 @@ export default async function handler(req, res) {
     }),
   });
 
-  // APIS.JSON DOSYASINI GÜNCELLE
   const jsonUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/apis.json`;
   let apis = [];
   let sha = null;
 
-  // Önce mevcut json dosyasını çekmeye çalış
   const getJson = await fetch(jsonUrl, {
     headers: { Authorization: `token ${token}` },
   });
   if (getJson.ok) {
     const data = await getJson.json();
-    sha = data.sha; // Güncelleme yapmak için sha değerini al
+    sha = data.sha;
     apis = JSON.parse(Buffer.from(data.content, "base64").toString("utf-8"));
   }
 
-  // Yeni API'yi listeye ekle (Varsayılan olarak aktif: true)
   apis.push({ apiName, targetUrl, slug, isActive: true });
 
-  // Güncellenmiş listeyi tekrar GitHub'a kaydet
   await fetch(jsonUrl, {
     method: "PUT",
     headers: {

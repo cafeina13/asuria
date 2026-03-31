@@ -53,7 +53,6 @@ export default async function handler(req, res) {
     const token = process.env.GITHUB_TOKEN;
 
     if (token) {
-      // GitHub'daki listeyi doğrudan düz metin formatında okuyoruz
       const jsonCheckRes = await fetch("https://api.github.com/repos/cafeina13/asuria/contents/apis.json", {
         headers: {
           'Authorization': `token ${token}`,
@@ -65,10 +64,8 @@ export default async function handler(req, res) {
         const jsonRes = await jsonCheckRes.json();
         const apisList = jsonRes.apis ? jsonRes.apis : jsonRes;
 
-        // Kendi ismini listede arıyor
         const buApi = apisList.find(api => api.slug === "bored");
 
-        // Eğer listede varsa ve panelden kapatılmışsa (isActive: false)
         if (buApi && buApi.isActive === false) {
           return res.status(200).send(KAPALI_YAZISI);
         }

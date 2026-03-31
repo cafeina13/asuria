@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const REPO_NAME = "asuria";
   const jsonUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/apis.json`;
 
-  // Sayfa yüklendiğinde listeyi getir (GET)
+  // ------------------------------------------------------------------- (GET)
   if (req.method === "GET") {
     const getJson = await fetch(jsonUrl, {
       headers: { Authorization: `token ${token}` },
@@ -20,10 +20,10 @@ export default async function handler(req, res) {
       );
       return res.status(200).json(apis);
     }
-    return res.status(200).json([]); // Henüz dosya yoksa boş liste dön
+    return res.status(200).json([]);
   }
 
-  // "Kaydet" butonuna basıldığında yeni ayarları kaydet (POST)
+  // ------------------------------------------------------------------- (POST) 
   if (req.method === "POST") {
     if (sifre !== req.body.password) {
       return res.status(401).json({ hata: "Yetkisiz erişim! Şifre yanlış." });
