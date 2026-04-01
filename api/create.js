@@ -75,29 +75,31 @@ export default async function handler(req, res) {
   let apis = [];
   let sha = null;
 
-  const getJson = await fetch(jsonUrl, {
-    headers: { Authorization: `token ${token}` },
-  });
   if (getJson.ok) {
     const data = await getJson.json();
     sha = data.sha;
-    apis = JSON.parse(Buffer.from(data.content, "base64").toString("utf-8"));
-  }
-
+    const content = Buffer.from(data.content, "base64").toString("utf-8");
+    
+    // Değişen Kısım:
+    const jsonObjesi = JSON.parse(content); 
+    apis = jsonObjesi.apis; // Objenin içindeki "apis" dizisini çekiyoruz
+}
   apis.push({ apiName, targetUrl, slug, isActive: true });
 
-  await fetch(jsonUrl, {
+// Yazma kısmı:
+await fetch(jsonUrl, {
     method: "PUT",
     headers: {
-      Authorization: `token ${token}`,
-      "Content-Type": "application/json",
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      message: "apis.json güncellendi",
-      content: Buffer.from(JSON.stringify(apis, null, 2)).toString("base64"),
-      sha: sha,
+        message: "apis.json güncellendi",
+        // Buraya dikkat: Tekrar obje yapısına sararak gönderiyoruz
+        content: Buffer.from(JSON.stringify({ apis: apis }, null, 2)).toString("base64"),
+        sha: sha,
     }),
-  });
+});
 
   res.status(200).json({ sonuc: "Başarılı" });
 }
