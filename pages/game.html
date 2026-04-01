@@ -6,9 +6,19 @@
     <link rel="stylesheet" href="../styles/game.css" />
   </head>
   <body>
-    <div class="left-panel">
-      <button id="btn-signUp" class="menu-btn">Kayıt Yaptır!</button>
-      <button id="btn-signIn" class="menu-btn">Turnike</button>
+
+    <div class="background" id="bg-dark"></div>
+    <div class="signModal close" id="left-hover-panel">
+      <div class="signModal-content" id="signModal-content">
+        <div class="signModal-header">
+          <h2>Güvenlik</h2>
+        </div>
+        <div class="left-panel" id="left-hover-panel-content">
+          <button id="btn-signUp" class="menu-btn">Kayıt Yaptır!</button>
+          <button id="btn-signIn" class="menu-btn">Turnike</button>
+          <button id="btn-signLoad" class="menu-btn">Load</button>
+        </div>
+      </div>
     </div>
 
     <div id="sign-up-modal" class="shopModal">
@@ -17,14 +27,11 @@
           <h2>Öğrenci işleri</h2>
           <button id="close-sign-up-Modal" class="close-modal">Kapat</button>
         </div>
-        <label>Ad-Soyad</label>
-        <input type="text" id="username-up-box" placeholder="Kullanıcı Adı" />
-        <label>Şifre giriniz...</label>
-        <input
-          type="password"
-          id="password-up-box"
-          placeholder="Güçlü olmak zorunda değil. ``Trust Me Bro"
-        />
+        <label class="sign-text">Ad-Soyad</label>
+        <input class="text-box" type="text" id="username-up-box" placeholder="Kullanıcı Adı" />
+        <label class="sign-text">Şifre giriniz...</label>
+        <input class="text-box" type="password" id="password-up-box" placeholder="Güçlü olmak zorunda değil. ``Trust Me Bro"/>
+        <button id="btn-signIn-check" class="kayit-button">Kayıt Ol</button>
       </div>
     </div>
 
@@ -44,7 +51,7 @@
         />
       </div>
     </div>
-
+    <div id="left-hover-check" class="left-hover-check"></div>
     <div class="game-area">
       <div class="main-panel">
         <div id="score-display">Manuel Büt: <span id="manuelbut">1</span></div>

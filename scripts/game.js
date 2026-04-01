@@ -1,6 +1,7 @@
 let butSayisi = 0;
 let otoButGucu = 0;
 let manuelButGucu = 1;
+let signedIn = false;
 
 let akademisyenList = [
     { name: "Fatih Hoca", cost: 10, effect: "Otomatik Büt", effectAciklama: "Her saniye 1 büt üretir", aktif: false, buff: ["adder", 1] },
@@ -77,15 +78,61 @@ function updateManuelBut() {
     return manuelButGucu;
 }
 
+const leftHoverPanelCheck = document.getElementById('left-hover-check');
+const leftHoverPanel = document.getElementById('left-hover-panel')
+const leftHoverPanelContent = document.getElementById('left-hover-panel-content')
+const bg_dark = document.getElementById('bg-dark');
+
+
+leftHoverPanelCheck.addEventListener('mouseenter', () => {
+    bg_dark.classList.add('show');
+    
+    leftHoverPanel.style.display = 'flex';
+    setTimeout(() => {
+        leftHoverPanel.classList.remove('close');
+        leftHoverPanel.classList.add('show');
+    }, 10);
+});
+
+leftHoverPanelContent.addEventListener('mouseleave', () => {
+    bg_dark.classList.remove('show');
+    leftHoverPanel.classList.remove('show');
+    leftHoverPanel.classList.add('close');
+    setTimeout(() => {
+        leftHoverPanel.style.display = 'none';
+    }, 300);
+});
+
+
+
 function updateGUI() {
     document.getElementById('but').textContent = butSayisi;
     document.getElementById('otobut').textContent = ` ${otoButGucu}/s`;
     document.getElementById('manuelbut').textContent = manuelButGucu
 }
 
-function renderSignUp(){
-}
+const btnSignUp = document.getElementById('btn-signUp');
+const signUpModal = document.getElementById('sign-up-modal');
+const closeSignUpModal = document.getElementById('close-sign-up-Modal');
 
+btnSignUp.addEventListener('click', () => {
+    signUpModal.style.display = 'flex';
+});
+
+closeSignUpModal.addEventListener('click', () => {
+    signUpModal.style.display = 'none';
+});
+
+const nameTextBox = document.getElementById('username-up-box');
+const passwordTextBox = document.getElementById('password-up-box');
+const kayitOlBTN = document.getElementById('btn-signIn-check');
+
+kayitOlBTN.addEventListener('click', () => {
+    name = nameTextBox.textContent;
+    password = passwordTextBox.textContent;
+
+    
+})
 
 
 function renderKadro() {
@@ -199,10 +246,12 @@ const closeKopyaModal = document.getElementById('close-kopyaModal');
 btnKopya.addEventListener('click', () => {
     renderKopyaSheet();
     kopyaModal.style.display = 'flex';
+    kopyaModal.style.opacity = 1;
 });
 
 closeKopyaModal.addEventListener('click', () => {
     kopyaModal.style.display = 'none';
+    kopyaModal.style.opacity = 0;
 });
 
 

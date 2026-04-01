@@ -23,32 +23,36 @@ body {
 }
 
 .right-panel {
+  position: static  ;
   width: 300px;
-  background: #3b3b3b;
+  background: #363636;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 50px;
+  gap: 15px;
+}
+
+.left-hover-check {
+  width: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  padding-top: 20px;
+  background-color: #101010;
+  z-index: 99;
 }
 
 .left-panel {
   width: 300px;
   background: #3b3b3b;
-  display: flex;
+  display: flex ;
   flex-direction: column;
-  align-items: center;
   padding-top: 50px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 15px;
-  padding-top: 20px;
+  height: 100%;
 }
+
 
 #score-display {
   font-size: 40px;
@@ -92,6 +96,126 @@ body {
 .menu-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px #1a252f;
+}
+
+.text-box {
+  width: 80%;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #323232;
+  color: white;
+  box-sizing: border-box;
+  outline: none;
+  align-self: center;
+}
+.text-box:focus {
+  border-color: #38bdf8;
+}
+
+.signModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: -50%;
+  width: 100%;
+  height: 100%;
+  /*background: rgba(0, 0, 0, 0.65);*/
+  justify-content: flex-start;
+  z-index: 100;
+  opacity: 0;
+  transition:
+    opacity 0.1s,
+    transform 0.3s;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.background.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+.signModal.show {
+  opacity: 1;
+  transform: translateX(50%);
+}
+.signModal.close {
+  transform: translateX(-50%);
+}
+
+.signModal-content {
+  background: rgb(68, 68, 68);
+  width: 80%;
+  left: -100%;
+  max-width: 300px;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.signModal-header {
+  background: #2b2b2b;
+  color: rgb(149, 149, 149);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.signModal-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.sign-text {
+  font-size: 16px;
+  color: #c9c9c9;
+  padding: 10px 0 5px 10%;
+  margin-top: 10px;
+}
+
+.kayit-button {
+  width: 80%;
+  margin: 25px 10% 20px 10%;
+  padding: 10px 10% 10px 10%;
+  background-color: #2c2c34;
+  color: #d1d1d1;
+  border: 1px solid #4a4a5e;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  justify-content: center;
+  align-items: center;
+}
+
+.kayit-button:hover {
+  background-color: #3e3e4a; 
+  border-color: #6c6c8c;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.kayit-button:active {
+  transform: scale(0.98);
 }
 
 .shopModal {
@@ -224,13 +348,13 @@ body {
   position: fixed;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%);
   background-color: #414141aa;
   color: #898989;
   padding: 12px 25px;
   border-radius: 30px;
   font-weight: bold;
   z-index: 1000;
+  transform: translateX(-50%);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   opacity: 0;
   transition:
@@ -240,5 +364,5 @@ body {
 
 .toast.show {
   opacity: 1;
-  transform: translateX(-50%) translateY(-10px);
+  transform: translateX(-50%) translateY(-10%);
 }
