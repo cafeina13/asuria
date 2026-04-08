@@ -1,1 +1,4 @@
 requestTest.py
+.vercel
+.env*.local
+package-lock.json

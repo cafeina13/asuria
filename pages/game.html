@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="../styles/game.css" />
   </head>
   <body>
-
     <div class="background" id="bg-dark"></div>
     <div class="signModal close" id="left-hover-panel">
       <div class="signModal-content" id="signModal-content">
@@ -16,7 +15,7 @@
         <div class="left-panel" id="left-hover-panel-content">
           <button id="btn-signUp" class="menu-btn">Kayıt Yaptır!</button>
           <button id="btn-signIn" class="menu-btn">Turnike</button>
-          <button id="btn-signLoad" class="menu-btn">Load</button>
+          <button id="btn-signSave" class="menu-btn">Kaydet</button>
         </div>
       </div>
     </div>
@@ -28,10 +27,20 @@
           <button id="close-sign-up-Modal" class="close-modal">Kapat</button>
         </div>
         <label class="sign-text">Ad-Soyad</label>
-        <input class="text-box" type="text" id="username-up-box" placeholder="Kullanıcı Adı" />
+        <input
+          class="text-box"
+          type="text"
+          id="username-up-box"
+          placeholder="Kullanıcı Adı"
+        />
         <label class="sign-text">Şifre giriniz...</label>
-        <input class="text-box" type="password" id="password-up-box" placeholder="Güçlü olmak zorunda değil. ``Trust Me Bro"/>
-        <button id="btn-signIn-check" class="kayit-button">Kayıt Ol</button>
+        <input
+          class="text-box"
+          type="password"
+          id="password-up-box"
+          placeholder="Güçlü olmak zorunda değil. ``Trust Me Bro"
+        />
+        <button id="btn-signUp-check" class="kayit-button">Kayıt Ol</button>
       </div>
     </div>
 
@@ -41,22 +50,30 @@
           <h2>Turnike</h2>
           <button id="close-sign-in-Modal" class="close-modal">Kapat</button>
         </div>
-        <label>Ad-Soyad</label>
-        <input type="text" id="username-in-box" placeholder="Kullanıcı Adı" />
-        <label>Şifre giriniz...</label>
+        <label class="sign-text">Ad-Soyad</label>
         <input
+          class="text-box"
+          type="text"
+          id="username-in-box"
+          placeholder="Kullanıcı Adı"
+        />
+        <label class="sign-text">Şifre giriniz...</label>
+        <input
+          class="text-box"
           type="password"
           id="password-in-box"
           placeholder="Güvenliği ikna et"
         />
+        <button id="btn-signIn-check" class="kayit-button">gel gel</button>
       </div>
     </div>
     <div id="left-hover-check" class="left-hover-check"></div>
     <div class="game-area">
       <div class="main-panel">
-        <div id="score-display">Manuel Büt: <span id="manuelbut">1</span></div>
-        <div id="score-display">Otobüt: <span id="otobut">0/s</span></div>
-        <div id="score-display">Toplam Büt: <span id="but">0</span></div>
+        <div class="score-display" id="username-display">Kullanıcı Adı: <span id="username-dyn">Albeni</span></div>
+        <div class="score-display" id="score-display-manuel">Manuel Büt: <span id="manuelbut">1</span></div>
+        <div class="score-display" id="score-display-oto">Otobüt: <span id="otobut">0/s</span></div>
+        <div class="score-display" id="score-display-total">Toplam Büt: <span id="but">0</span></div>
         <button id="main-btn">BÜT!</button>
       </div>
 
