@@ -8,7 +8,7 @@ async function createAPI() {
         password: document.getElementById('password').value
     };
 
-    if (!payload.targetUrl || !payload.slug || !payload.password) return alert("Eksik alan bırakmayın!");
+    if (!payload.targetUrl || !payload.apiName || !payload.slug || !payload.password) return alert("Eksik alan bırakmayın!");
 
     status.className = '';
     status.innerText = "GitHub'a bağlanılıyor ve dosya oluşturuluyor...";
