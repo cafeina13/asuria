@@ -34,7 +34,13 @@ function cdata(s) {
   return `<![CDATA[${String(s).replace(/]]>/g, "]]]]><![CDATA[>")}]]>`;
 }
 
-function rssOlustur({ yazar, soz, aciklama, zaman, siteUrl }) {
+function sayfaUrl(baseUrl, yazar, soz, aciklama) {
+  const params = new URLSearchParams({ y: yazar, q: soz });
+  if (aciklama && !aciklama.startsWith("[")) params.set("a", aciklama);
+  return `${baseUrl}/pages/senveau.html?${params.toString()}`;
+}
+
+function rssOlustur({ yazar, soz, aciklama, zaman, baseUrl }) {
   const pubDate = new Date(zaman).toUTCString();
   const aiVar = aciklama && !aciklama.startsWith("[");
   const govdeDuz = aiVar ? `${soz}\n\n— ${yazar}\n\n${aciklama}` : `${soz}\n\n— ${yazar}`;
@@ -42,18 +48,20 @@ function rssOlustur({ yazar, soz, aciklama, zaman, siteUrl }) {
     ? `<blockquote><p>${xmlKacisla(soz)}</p><footer>— <cite>${xmlKacisla(yazar)}</cite></footer></blockquote><p>${xmlKacisla(aciklama)}</p>`
     : `<blockquote><p>${xmlKacisla(soz)}</p><footer>— <cite>${xmlKacisla(yazar)}</cite></footer></blockquote>`;
   const baslikKisa = soz.length > 80 ? soz.slice(0, 77) + "…" : soz;
+  const kanalUrl = `${baseUrl}/pages/senveau.html`;
+  const itemUrl = sayfaUrl(baseUrl, yazar, soz, aciklama);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Senveau — Stoik Sözler</title>
-    <link>${xmlKacisla(siteUrl)}</link>
+    <link>${xmlKacisla(kanalUrl)}</link>
     <description>2 saatte bir stoik söz ve AI açıklaması.</description>
     <language>tr</language>
     <lastBuildDate>${pubDate}</lastBuildDate>
     <ttl>120</ttl>
     <item>
       <title>${xmlKacisla(`${yazar} — ${baslikKisa}`)}</title>
-      <link>${xmlKacisla(siteUrl)}</link>
+      <link>${xmlKacisla(itemUrl)}</link>
       <description>${cdata(govdeDuz)}</description>
       <content:encoded>${cdata(govdeHtml)}</content:encoded>
       <dc:creator>${xmlKacisla(yazar)}</dc:creator>
@@ -144,11 +152,11 @@ export default async function handler(request, response) {
   if (request.method === "OPTIONS") return response.status(200).end();
 
   const rssMod = request.query?.format === "rss";
-  const siteUrl = `https://${request.headers.host || "asuria.vercel.app"}/`;
+  const baseUrl = `https://${request.headers.host || "asuria.vercel.app"}`;
 
   if (rssMod && Date.now() - rssCache.zaman < RSS_CACHE_SURE_MS && rssCache.soz) {
     response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
-    return response.status(200).send(rssOlustur({ ...rssCache, siteUrl }));
+    return response.status(200).send(rssOlustur({ ...rssCache, baseUrl }));
   }
 
   const baslangic = Date.now();
@@ -170,7 +178,7 @@ export default async function handler(request, response) {
         response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
         return response.status(200).send(rssOlustur({
           yazar: "Senveau", soz: KAPALI_YAZISI, aciklama: "",
-          zaman: Date.now(), siteUrl,
+          zaman: Date.now(), baseUrl,
         }));
       }
       response.setHeader("Content-Type", "text/plain; charset=utf-8");
@@ -197,7 +205,7 @@ export default async function handler(request, response) {
     if (rssMod) {
       rssCache = { zaman: Date.now(), yazar, soz, aciklama };
       response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
-      return response.status(200).send(rssOlustur({ ...rssCache, siteUrl }));
+      return response.status(200).send(rssOlustur({ ...rssCache, baseUrl }));
     }
 
     response.setHeader("Content-Type", "text/plain; charset=utf-8");
