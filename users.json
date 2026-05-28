@@ -5,8 +5,8 @@
       "trustMeBroPassword": "bak",
       "score": 9999,
       "upgrades": {
-        "up1": [true,false,false,false,false,false,false,false,true,false,true,false],
-        "up2": [false,false,false,false,false,false,false,false,false]
+        "up1": [0,8,10],
+        "up2": []
       }
     },
     "sherlock": {
@@ -14,8 +14,8 @@
       "trustMeBroPassword": "lola",
       "score": 13,
       "upgrades": {
-        "up1": [true,true,true,true,true,true,true,true,true,true,true,true],
-        "up2": [true,true,true,true,true,true,true,true,true]
+        "up1": [0,1,2,3,4,5,6,7,8,9,10,11],
+        "up2": [0,1,2,3,4,5,6,7,8]
       }
     }
   }

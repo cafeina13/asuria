@@ -88,7 +88,7 @@ const bg_dark = document.getElementById('bg-dark');
 leftHoverPanelCheck.addEventListener('mouseenter', () => {
     bg_dark.classList.add('show');
     
-    if (signedIn) {saveButton.style.display = 'flexible';} 
+    if (signedIn) {saveButton.style.display = 'flex';}
     else {saveButton.style.display = 'none';}
 
     leftHoverPanel.style.display = 'flex';
@@ -133,11 +133,43 @@ const nameUpTextBox = document.getElementById('username-up-box');
 const passwordUpTextBox = document.getElementById('password-up-box');
 const kayitOlBTN = document.getElementById('btn-signUp-check');
 
-kayitOlBTN.addEventListener('click', () => {
-    let name = nameUpTextBox.textContent;
-    let password = passwordUpTextBox.textContent;
+kayitOlBTN.addEventListener('click', async () => {
+    const name = nameUpTextBox.value.trim();
+    const password = passwordUpTextBox.value;
 
+    if (!name || !password) {
+        showToast("İsim ve şifre boş bırakılamaz.");
+        return;
+    }
 
+    try {
+        const res = await fetch('/api/user-handler', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: name, password }),
+        });
+
+        if (res.ok) {
+            signedIn = true;
+            nameIn = name;
+            passwordIn = password;
+            butSayisi = 0;
+            akademisyenList.forEach(h => h.aktif = false);
+            kopyaList.forEach(k => k.aktif = false);
+            updateOtoBut(true);
+            updateManuelBut();
+            manuelButGucu = manuelButGucu === 0 ? 1 : manuelButGucu;
+            document.getElementById('username-dyn').textContent = name;
+            updateGUI();
+            closeSignUpModal.click();
+            showToast(`Hoş geldin ${name}!`);
+        } else {
+            const veri = await res.json();
+            showToast(`Kayıt reddedildi: ${veri.hata}`);
+        }
+    } catch (e) {
+        showToast(`Kayıt hatası: ${e.message}`);
+    }
 })
 
 // Hover Pencere, Giriş yap---------------------------------------------
@@ -164,21 +196,20 @@ girisBTN.addEventListener('click', async () => {
     nameIn = nameInTextBox.value != "" ? nameInTextBox.value : "sherlock" ;
     passwordIn = passwordInTextBox.value;
 
-    const getJson = await fetch(`../api/user-handler.js?username=${nameIn}&password=${passwordIn}`);
+    const getJson = await fetch(`/api/user-handler?username=${encodeURIComponent(nameIn)}&password=${encodeURIComponent(passwordIn)}`);
     const userHanger = await getJson.json();
     if (getJson.ok){
+        signedIn = true;
         document.getElementById('username-dyn').textContent = userHanger.name;
         closeSignInModal.click();
 
         butSayisi = userHanger.score;
 
-        userHanger.upgrades.up1.forEach((deger,index) => {
-            akademisyenList[id=index].aktif = deger;
-        });
+        const acikAkademisyen = new Set(userHanger.upgrades.up1 || []);
+        akademisyenList.forEach(h => { h.aktif = acikAkademisyen.has(h.id); });
 
-        userHanger.upgrades.up2.forEach((deger,index) => {
-            kopyaList[id=index].aktif = deger;
-        });
+        const acikKopya = new Set(userHanger.upgrades.up2 || []);
+        kopyaList.forEach(k => { k.aktif = acikKopya.has(k.id); });
 
 
         updateManuelBut();
@@ -281,6 +312,41 @@ function kopyaCek(index) {
     }
 }
 
+
+saveButton.addEventListener('click', async () => {
+    if (!signedIn) {
+        showToast("Önce turnikeden geçmelisin.");
+        return;
+    }
+
+    const up1 = akademisyenList.filter(h => h.aktif).map(h => h.id);
+    const up2 = kopyaList.filter(k => k.aktif).map(k => k.id);
+
+    try {
+        const res = await fetch('/api/user-handler', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: nameIn,
+                password: passwordIn,
+                score: butSayisi,
+                upgrades: { up1, up2 },
+            }),
+        });
+
+        if (res.ok) {
+            const veri = await res.json();
+            showToast(`Kaydedildi: ${veri.score} büt`);
+        } else if (res.status === 401) {
+            const veri = await res.json();
+            showToast(`Kayıt reddedildi: ${veri.hata}`);
+        } else {
+            showToast(`Kayıt başarısız (HTTP ${res.status})`);
+        }
+    } catch (e) {
+        showToast(`Kayıt hatası: ${e.message}`);
+    }
+});
 
 document.getElementById('main-btn').addEventListener('click', () => {
     butSayisi += manuelButGucu;

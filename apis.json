@@ -11,6 +11,12 @@
       "targetUrl": "https://www.boredapi.com/api/activity",
       "slug": "bored",
       "isActive": true
+    },
+    {
+      "apiName": "Kullanıcı İşleri",
+      "targetUrl": "",
+      "slug": "user-handler",
+      "isActive": true
     }
   ]
 }
