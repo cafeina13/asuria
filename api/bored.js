@@ -1,5 +1,8 @@
-
 const KAPALI_YAZISI = "Bu API şu anda Dans Etmeye gitti ne zaman gelir belli değil.";
+const KONFIG_CACHE_SURE_MS = 60_000;
+const TOPLAM_SURE_MS = 6000;
+
+let konfigCache = { zaman: 0, isActive: true };
 
 const weatherMap = {
   // --- AÇIK VE BULUTLU ---
@@ -45,57 +48,70 @@ const weatherMap = {
   99: "Şiddetli Dolu ve Fırtına"
 };
 
-export default async function handler(req, res) {
+async function konfigAktifMi(token, signal) {
+  const simdi = Date.now();
+  if (simdi - konfigCache.zaman < KONFIG_CACHE_SURE_MS) return konfigCache.isActive;
 
-  const sehir = req.query.sehir;
+  const headers = { Accept: "application/vnd.github.v3.raw" };
+  if (token) headers.Authorization = `token ${token}`;
 
   try {
-    const token = process.env.GITHUB_TOKEN;
-
-    if (token) {
-      const jsonCheckRes = await fetch("https://api.github.com/repos/cafeina13/asuria/contents/apis.json", {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3.raw'
-        }
-      });
-
-      if (jsonCheckRes.ok) {
-        const jsonRes = await jsonCheckRes.json();
-        const apisList = jsonRes.apis ? jsonRes.apis : jsonRes;
-
-        const buApi = apisList.find(api => api.slug === "bored");
-
-        if (buApi && buApi.isActive === false) {
-          return res.status(200).send(KAPALI_YAZISI);
-        }
-      }
+    const res = await fetch(
+      "https://api.github.com/repos/cafeina13/asuria/contents/apis.json",
+      { headers, signal }
+    );
+    if (!res.ok) {
+      console.error(`Konfig okunamadı: GitHub ${res.status}`);
+      return konfigCache.isActive;
     }
+    const veri = await res.json();
+    const liste = Array.isArray(veri) ? veri : veri.apis || [];
+    const buApi = liste.find(a => a.slug === "bored");
+    const isActive = buApi ? buApi.isActive !== false : true;
+    konfigCache = { zaman: simdi, isActive };
+    return isActive;
+  } catch (hata) {
+    console.error(`Konfig hatası: ${hata.message}`);
+    return konfigCache.isActive;
   }
-  catch (error) { return res.status(500).send("Hata oluştu: " + error.message); }
+}
+
+export default async function handler(req, res) {
+  const sehir = req.query.sehir;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TOPLAM_SURE_MS);
 
   try {
+    const aktif = await konfigAktifMi(process.env.GITHUB_TOKEN, controller.signal);
+    if (!aktif) {
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      return res.status(200).send(KAPALI_YAZISI);
+    }
 
     let fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=37.7648&longitude=30.5566&current_weather=true&timezone=auto`;
     if (sehir) {
-      const sehirKoordinatlari = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sehir)}&format=json&limit=1`, {
-        headers: { 'User-Agent': 'Asuria-Weather-App' }
-      });
-      const koordinatData = await sehirKoordinatlari.json();
-      if (koordinatData.length !== 0) {
-        fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${koordinatData[0].lat}&longitude=${koordinatData[0].lon}&current_weather=true&timezone=auto`;
+      try {
+        const sehirKoordinatlari = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sehir)}&format=json&limit=1`,
+          { headers: { "User-Agent": "Asuria-Weather-App" }, signal: controller.signal }
+        );
+        const koordinatData = await sehirKoordinatlari.json();
+        if (koordinatData.length !== 0) {
+          fetchUrl = `https://api.open-meteo.com/v1/forecast?latitude=${koordinatData[0].lat}&longitude=${koordinatData[0].lon}&current_weather=true&timezone=auto`;
+        }
+      } catch (geoHata) {
+        console.error(`Geocoding başarısız, varsayılan konum kullanılıyor: ${geoHata.message}`);
       }
     }
 
     const [havaResponse, kediResponse] = await Promise.all([
-      fetch(fetchUrl),
-      fetch("https://catfact.ninja/fact")
+      fetch(fetchUrl, { signal: controller.signal }),
+      fetch("https://catfact.ninja/fact", { signal: controller.signal }),
     ]);
 
-
-    const [kediFact, havaData] = await Promise.all([
+    const [havaData, kediFact] = await Promise.all([
+      havaResponse.json(),
       kediResponse.json(),
-      havaResponse.json()
     ]);
 
     const sicaklik = havaData.current_weather.temperature;
@@ -109,8 +125,12 @@ export default async function handler(req, res) {
     const cikti = `Kediii: ${kediFact.fact}\n${sehir ? sehir.charAt(0).toUpperCase() + sehir.slice(1) : "Isparta"} Hava Durumu: ${havaDurumu}\nSıcaklık: ${sicaklik}°C\nRüzgar Hızı: ${ruzgar} km/h\nEn son güncelleme: ${zaman}`;
 
     return res.status(200).send(cikti);
-
   } catch (e) {
-    return res.status(500).send("Hata oluştu : " + e.message);
+    if (e.name === "AbortError") {
+      return res.status(504).send("Hata: Zaman aşımı");
+    }
+    return res.status(500).send("Hata oluştu: " + e.message);
+  } finally {
+    clearTimeout(timer);
   }
 }
