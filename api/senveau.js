@@ -4,6 +4,7 @@ const TOPLAM_SURE_MS = 6000;
 const ON_ISLEM_SURE_MS = 2000;
 const GEMINI_MIN_SURE_MS = 1500;
 const KONFIG_CACHE_SURE_MS = 60_000;
+const RSS_CACHE_SURE_MS = 2 * 60 * 60 * 1000;
 
 const HATA_MESAJLARI = {
   400: "Geçersiz istek",
@@ -18,6 +19,46 @@ const HATA_MESAJLARI = {
 };
 
 let konfigCache = { zaman: 0, isActive: true };
+let rssCache = { zaman: 0, yazar: "", soz: "", aciklama: "" };
+
+function xmlKacisla(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function cdata(s) {
+  return `<![CDATA[${String(s).replace(/]]>/g, "]]]]><![CDATA[>")}]]>`;
+}
+
+function rssOlustur({ yazar, soz, aciklama, zaman, feedUrl }) {
+  const pubDate = new Date(zaman).toUTCString();
+  const aiVar = aciklama && !aciklama.startsWith("[");
+  const govde = aiVar ? `${soz}\n\n${aciklama}` : soz;
+  const baslikKisa = soz.length > 80 ? soz.slice(0, 77) + "…" : soz;
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Senveau — Stoik Sözler</title>
+    <link>${xmlKacisla(feedUrl)}</link>
+    <description>2 saatte bir stoik söz ve AI açıklaması.</description>
+    <language>tr</language>
+    <lastBuildDate>${pubDate}</lastBuildDate>
+    <ttl>120</ttl>
+    <item>
+      <title>${xmlKacisla(`${yazar} — ${baslikKisa}`)}</title>
+      <link>${xmlKacisla(feedUrl)}</link>
+      <description>${cdata(govde)}</description>
+      <author>${xmlKacisla(yazar)}</author>
+      <pubDate>${pubDate}</pubDate>
+      <guid isPermaLink="false">senveau-${zaman}</guid>
+    </item>
+  </channel>
+</rss>`;
+}
 
 async function konfigAktifMi(token, signal) {
   const simdi = Date.now();
@@ -95,9 +136,16 @@ export default async function handler(request, response) {
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  response.setHeader("Content-Type", "text/plain; charset=utf-8");
 
   if (request.method === "OPTIONS") return response.status(200).end();
+
+  const rssMod = request.query?.format === "rss";
+  const feedUrl = `https://${request.headers.host || "asuria.vercel.app"}/api/senveau?format=rss`;
+
+  if (rssMod && Date.now() - rssCache.zaman < RSS_CACHE_SURE_MS && rssCache.soz) {
+    response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+    return response.status(200).send(rssOlustur({ ...rssCache, feedUrl }));
+  }
 
   const baslangic = Date.now();
   const onIslemController = new AbortController();
@@ -114,11 +162,20 @@ export default async function handler(request, response) {
     clearTimeout(onIslemTimer);
 
     if (konfigSonuc.status === "fulfilled" && konfigSonuc.value === false) {
+      if (rssMod) {
+        response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+        return response.status(200).send(rssOlustur({
+          yazar: "Senveau", soz: KAPALI_YAZISI, aciklama: "",
+          zaman: Date.now(), feedUrl,
+        }));
+      }
+      response.setHeader("Content-Type", "text/plain; charset=utf-8");
       return response.status(200).send(KAPALI_YAZISI);
     }
 
     if (sozSonuc.status !== "fulfilled") {
       console.error(`Söz alınamadı: ${sozSonuc.reason?.message}`);
+      response.setHeader("Content-Type", "text/plain; charset=utf-8");
       return response.status(502).send("Sistem Hatası: Söz kaynağı erişilemez.");
     }
 
@@ -133,10 +190,18 @@ export default async function handler(request, response) {
       aciklama = await geminiAciklamasi(geminiApiKey, soz, kalanSure);
     }
 
+    if (rssMod) {
+      rssCache = { zaman: Date.now(), yazar, soz, aciklama };
+      response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+      return response.status(200).send(rssOlustur({ ...rssCache, feedUrl }));
+    }
+
+    response.setHeader("Content-Type", "text/plain; charset=utf-8");
     return response.status(200).send(`${yazar},${soz} :: .${aciklama}`);
   } catch (hata) {
     clearTimeout(onIslemTimer);
     console.error(`Sistem hatası: ${hata.message}`);
+    response.setHeader("Content-Type", "text/plain; charset=utf-8");
     return response.status(500).send(`Sistem Hatası: ${hata.message}`);
   }
 }
