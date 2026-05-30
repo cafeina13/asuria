@@ -56,9 +56,7 @@ function urlTemizle() {
 }
 
 async function stoicGetir() {
-  const res = await fetch("https://stoic-quotes.com/api/quote", {
-    referrerPolicy: "no-referrer",
-  });
+  const res = await fetch("https://www.stoic-quotes.com/api/quote");
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const veri = await res.json();
   goster(veri.author, veri.text, "");
