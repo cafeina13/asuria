@@ -43,13 +43,13 @@ function goster(yazar, soz, aciklama) {
   document.title = yazar ? `${yazar} - Senveau` : "Senveau";
 }
 
-function urlGuncelle(yazar, soz, aciklama) {
+/*function urlGuncelle(yazar, soz, aciklama = "") {
   const params = new URLSearchParams({ y: yazar, q: soz });
   if (aciklama && !aciklama.startsWith("[")) {
     params.set("a", aciklama);
   }
   history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
-}
+}*/
 
 function urlTemizle() {
   history.replaceState(null, "", location.pathname);
@@ -62,7 +62,6 @@ async function stoicGetir() {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const veri = await res.json();
   goster(veri.author, veri.text, "");
-  urlGuncelle(veri.author, veri.text);
 }
 
 async function senveauGetir() {
@@ -80,7 +79,6 @@ async function senveauGetir() {
   const soz = sepIdx >= 0 ? rest.slice(0, sepIdx) : rest;
   const aciklama = sepIdx >= 0 ? rest.slice(sepIdx + 5) : "";
   goster(yazar, soz, aciklama);
-  urlGuncelle(yazar, soz, aciklama);
 }
 
 function hataGoster(e) {
