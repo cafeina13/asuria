@@ -51,8 +51,14 @@ function urlGuncelle(yazar, soz, aciklama) {
   history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
 }
 
+function urlTemizle() {
+  history.replaceState(null, "", location.pathname);
+}
+
 async function stoicGetir() {
-  const res = await fetch("https://stoic-quotes.com/api/quote");
+  const res = await fetch("https://stoic-quotes.com/api/quote", {
+    referrerPolicy: "no-referrer",
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const veri = await res.json();
   goster(veri.author, veri.text, "");
@@ -86,6 +92,7 @@ async function yeniSozGetir() {
   yenileBtn.disabled = true;
   yenileBtn.classList.add("donerken");
   arkaPlanYenile();
+  urlTemizle();
   try {
     await stoicGetir();
   } catch (e) {
@@ -107,6 +114,7 @@ const navGirisi = performance.getEntriesByType("navigation")[0];
 const tarayiciYenileme = navGirisi?.type === "reload";
 
 if (tarayiciYenileme) {
+  urlTemizle();
   stoicGetir().catch(hataGoster);
 } else if (qParam) {
   goster(yParam || "", qParam, aParam || "");
