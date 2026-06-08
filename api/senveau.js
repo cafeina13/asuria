@@ -34,10 +34,17 @@ function cdata(s) {
   return `<![CDATA[${String(s).replace(/]]>/g, "]]]]><![CDATA[>")}]]>`;
 }
 
+function tokenYap(veri) {
+  // { q, y, a } -> "1.<base64url>"  : tüm alanları tek param halinde paketler.
+  // Baştaki "1." sürüm etiketi; ileride biçim değişirse eski linkler kırılmaz.
+  const json = JSON.stringify(veri);
+  return "1." + Buffer.from(json, "utf8").toString("base64url");
+}
+
 function sayfaUrl(baseUrl, yazar, soz, aciklama) {
-  const params = new URLSearchParams({ y: yazar, q: soz });
-  if (aciklama && !aciklama.startsWith("[")) params.set("a", aciklama);
-  return `${baseUrl}/pages/senveau.html?${params.toString()}`;
+  const veri = { q: soz, y: yazar };
+  if (aciklama && !aciklama.startsWith("[")) veri.a = aciklama;
+  return `${baseUrl}/pages/senveau.html?t=${tokenYap(veri)}`;
 }
 
 function rssOlustur({ yazar, soz, aciklama, zaman, baseUrl }) {

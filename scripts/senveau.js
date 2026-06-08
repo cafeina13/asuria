@@ -4,6 +4,9 @@ const aciklamaEl = document.getElementById("aciklama");
 const yenileBtn = document.getElementById("yenile");
 const arkaPlanEl = document.getElementById("arka-plan");
 
+// O an ekranda olan söz. URL temizlense de paylaşım için elimizde kalsın diye burada tutuyoruz.
+let aktifVeri = null;
+
 function arkaPlanYenile() {
   const seed = Math.floor(Math.random() * 1000000);
   arkaPlanEl.classList.add("yukleniyor");
@@ -41,18 +44,48 @@ function goster(yazar, soz, aciklama) {
     aciklamaEl.style.display = "none";
   }
   document.title = yazar ? `${yazar} - Senveau` : "Senveau";
+
+  // Gösterdiğimiz şeyi paylaşılabilir biçimde sakla (URL'yi temizlesek bile kaybolmasın).
+  aktifVeri = { q: soz, y: yazar };
+  if (aciklama && !aciklama.startsWith("[")) aktifVeri.a = aciklama;
+}
+
+function tokenYap(veri) {
+  // { q, y, a } -> "1.<base64url>". TextEncoder kullanıyoruz çünkü btoa
+  // Türkçe karakterlerde (ç, ş, ğ, ı) patlar; önce UTF-8 byte'larına çeviriyoruz.
+  const bytes = new TextEncoder().encode(JSON.stringify(veri));
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  const b64 = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return "1." + b64;
+}
+
+function tokenCoz(t) {
+  // "1.<base64url>" -> { q, y, a }
+  const nokta = t.indexOf(".");
+  const surum = nokta >= 0 ? t.slice(0, nokta) : "";
+  if (surum !== "1") throw new Error(`Bilinmeyen token sürümü: ${surum || "(yok)"}`);
+  let b64 = t.slice(nokta + 1).replace(/-/g, "+").replace(/_/g, "/");
+  b64 += "=".repeat((4 - (b64.length % 4)) % 4); // base64url padding'i atmıştı, geri ekle
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
 }
 
 /*function urlGuncelle(yazar, soz, aciklama = "") {
-  const params = new URLSearchParams({ y: yazar, q: soz });
-  if (aciklama && !aciklama.startsWith("[")) {
-    params.set("a", aciklama);
-  }
-  history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+  const veri = { q: soz, y: yazar };
+  if (aciklama && !aciklama.startsWith("[")) veri.a = aciklama;
+  history.replaceState(null, "", `${location.pathname}?t=${tokenYap(veri)}`);
 }*/
 
 function urlTemizle() {
   history.replaceState(null, "", location.pathname);
+}
+
+// Paylaşım butonu için: o an gösterilen sözden tam (token'lı) linki üretir.
+// Adres çubuğu temiz olsa bile aktifVeri sayesinde linki yeniden kurabiliyoruz.
+function paylasimUrl() {
+  if (!aktifVeri) return location.href;
+  return `${location.origin}${location.pathname}?t=${tokenYap(aktifVeri)}`;
 }
 
 async function stoicGetir() {
@@ -103,17 +136,23 @@ yenileBtn.addEventListener("click", yeniSozGetir);
 arkaPlanYenile();
 
 const params = new URLSearchParams(location.search);
-const qParam = params.get("q");
-const yParam = params.get("y");
-const aParam = params.get("a");
+const tParam = params.get("t");
 const navGirisi = performance.getEntriesByType("navigation")[0];
 const tarayiciYenileme = navGirisi?.type === "reload";
 
 if (tarayiciYenileme) {
   urlTemizle();
   stoicGetir().catch(hataGoster);
-} else if (qParam) {
-  goster(yParam || "", qParam, aParam || "");
+} else if (tParam) {
+  try {
+    const veri = tokenCoz(tParam);
+    urlTemizle();                          // token artık bellekte; adres çubuğunu temizle
+    goster(veri.y || "", veri.q || "", veri.a || "");
+  } catch (e) {
+    // Bozuk/eksik token: link kopuk gelmiş olabilir, taze söz çekip yine de bir şey göster.
+    console.error(`Token çözülemedi: ${e.message}`);
+    senveauGetir().catch(hataGoster);
+  }
 } else {
   senveauGetir().catch(hataGoster);
 }
