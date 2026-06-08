@@ -158,6 +158,31 @@ export default async function handler(request, response) {
 
   if (request.method === "OPTIONS") return response.status(200).end();
 
+  // Talep üzerine AI açıklaması: ?soz=<söz> -> sadece o sözün açıklamasını döndür.
+  // Refresh/yenile ile gelen sözlerde AI yok (rate limit); bu uç boşluğu sonradan doldurur.
+  const aciklanacakSoz = request.query?.soz;
+  if (aciklanacakSoz) {
+    response.setHeader("Content-Type", "text/plain; charset=utf-8");
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    if (!geminiApiKey) return response.status(200).send("[AI devre dışı]");
+
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ON_ISLEM_SURE_MS);
+    const aktif = await konfigAktifMi(process.env.GITHUB_TOKEN, ctrl.signal);
+    clearTimeout(timer);
+    if (!aktif) return response.status(200).send("[AI kapalı]");
+
+    // Gemini sık sık 503 (aşırı yük) döndürür; "biraz sonra dene" demektir.
+    // Tek seferlik kısa retry, tıklamanın ilk seferde tutma şansını ciddi artırır.
+    const DENEME_MS = 4000;
+    let aciklama = await geminiAciklamasi(geminiApiKey, String(aciklanacakSoz), DENEME_MS);
+    if (aciklama.startsWith("[AI 503")) {
+      await new Promise((r) => setTimeout(r, 700));
+      aciklama = await geminiAciklamasi(geminiApiKey, String(aciklanacakSoz), DENEME_MS);
+    }
+    return response.status(200).send(aciklama);
+  }
+
   const rssMod = request.query?.format === "rss";
   const baseUrl = `https://${request.headers.host || "asuria.vercel.app"}`;
 

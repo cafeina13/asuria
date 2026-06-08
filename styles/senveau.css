@@ -113,3 +113,45 @@ blockquote::after {
 .yenile-btn.donerken {
   transform: rotate(360deg);
 }
+.ai-btn {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  height: 38px;
+  padding: 0 0.9rem;
+  border-radius: 19px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+.ai-btn[hidden] {
+  display: none;
+}
+.ai-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+}
+.ai-btn:active {
+  background: rgba(56, 189, 248, 0.32);
+}
+.ai-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.ai-btn.yukleniyor {
+  animation: ai-nabiz 1s ease-in-out infinite;
+}
+@keyframes ai-nabiz {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}

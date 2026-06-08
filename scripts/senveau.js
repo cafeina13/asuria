@@ -3,6 +3,8 @@ const yazarEl = document.getElementById("yazar");
 const aciklamaEl = document.getElementById("aciklama");
 const yenileBtn = document.getElementById("yenile");
 const arkaPlanEl = document.getElementById("arka-plan");
+const aiBtn = document.getElementById("ai-acikla");
+const AI_BTN_ETIKET = "AI ile açıkla";
 
 // O an ekranda olan söz. URL temizlense de paylaşım için elimizde kalsın diye burada tutuyoruz.
 let aktifVeri = null;
@@ -48,6 +50,9 @@ function goster(yazar, soz, aciklama) {
   // Gösterdiğimiz şeyi paylaşılabilir biçimde sakla (URL'yi temizlesek bile kaybolmasın).
   aktifVeri = { q: soz, y: yazar };
   if (aciklama && !aciklama.startsWith("[")) aktifVeri.a = aciklama;
+
+  // AI butonu yalnızca gerçek açıklama yokken görünsün (refresh/yenile durumu).
+  aiBtn.hidden = Boolean(aktifVeri.a) || !soz;
 }
 
 function tokenYap(veri) {
@@ -115,6 +120,31 @@ async function senveauGetir() {
 function hataGoster(e) {
   sozEl.classList.add("hata");
   sozEl.textContent = `Yüklenemedi: ${e.message}`;
+  aiBtn.hidden = true;
+}
+
+// Talep üzerine AI açıklaması: o anki sözü sunucuya gönder, açıklamayı getir.
+async function aiAcikla() {
+  if (!aktifVeri || !aktifVeri.q) return;
+  aiBtn.disabled = true;
+  aiBtn.classList.add("yukleniyor");
+  aiBtn.textContent = "Açıklanıyor…";
+  try {
+    const res = await fetch(`/api/senveau?soz=${encodeURIComponent(aktifVeri.q)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const aciklama = (await res.text()).trim();
+    // "[AI 429 - ...]" gibi de gelebilir; goster bunu "bulunamadı (sebep)" olarak gösterir
+    // ve gerçek açıklama gelmediği için butonu görünür bırakır (tekrar denenebilir).
+    goster(aktifVeri.y || "", aktifVeri.q, aciklama);
+  } catch (e) {
+    aciklamaEl.textContent = `AI açıklaması alınamadı: ${e.message}`;
+    aciklamaEl.classList.add("eksik");
+    aciklamaEl.style.display = "block";
+  } finally {
+    aiBtn.disabled = false;
+    aiBtn.classList.remove("yukleniyor");
+    aiBtn.textContent = AI_BTN_ETIKET;
+  }
 }
 
 async function yeniSozGetir() {
@@ -133,6 +163,7 @@ async function yeniSozGetir() {
 }
 
 yenileBtn.addEventListener("click", yeniSozGetir);
+aiBtn.addEventListener("click", aiAcikla);
 arkaPlanYenile();
 
 const params = new URLSearchParams(location.search);
